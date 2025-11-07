@@ -12,9 +12,9 @@ token_patterns = [
     # KEYWORDS
     (r'HAI\b', 'Code Delimiter'),
     (r'KTHXBYE\b', 'Code Delimiter'),
-    (r'BTW.*', 'Comment Line'),
-    (r'OBTW\b', 'Comment Line'),
-    (r'TLDR\b', 'Comment Line'),
+    (r'BTW\b', 'Single Comment Line'),
+    (r'OBTW\b', 'Multi Comment Start'),
+    (r'TLDR\b', 'Multi Comment End'),
     (r'I HAS A\b', 'Variable Declaration'),
     (r'ITZ\b', 'Variable Assignment'),
     (r'R\b', 'Variable Assignment'),
@@ -88,8 +88,14 @@ class tokenizer:
         return None, None
 
     def tokenize(self):
+        #logic to check if currently inside a comment
+        single_comment = False
+        multi_comment = False
         code = self.input_code
         while self.current < len(self.input_code):
+            #end single comment
+            if code[self.current] == '\n':
+                single_comment = False
             #ignore white spaces
             if code[self.current].isspace():
                 self.current += 1
@@ -98,8 +104,22 @@ class tokenizer:
             token = self.match_regex(code, self.current)
             if token is None:
                 # No match found, skip the current character
+                print("none")
+                self.current += 1
                 continue
-            else:
+            #start of comment
+            elif token[1] == "Single Comment Line" and not (single_comment or multi_comment):
+                single_comment = True
+                self.tokens.append(token[1])
+            elif token[1] == "Multi Comment Start" and not (single_comment or multi_comment):
+                multi_comment = True
+                self.tokens.append(token[1])
+            #end multi comment
+            elif token[1] == "Multi Comment End": 
+                multi_comment = False
+                self.tokens.append(token[1])
+            #no comments
+            elif not (single_comment or multi_comment):
                 self.tokens.append(token[1])
         return self.tokens
     
@@ -107,7 +127,11 @@ class tokenizer:
 
 #test code
 sample_code = '''HAI
-I HAS A var ITZ 10
+I HAS A var ITZ 10 BTW i love 127
+OBTW
+gutom na ako BTW this shouldnt work
+TLDR
+VISIBLE "The value of var is: " AN var
 KTHXBYE
 '''
 print(len(sample_code))
