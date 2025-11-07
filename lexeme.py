@@ -1,4 +1,5 @@
 import re
+import os
 
 #regex to follow while tokenizing
 token_patterns = [
@@ -63,6 +64,17 @@ token_patterns = [
     (r'MKAY\b', 'Concatenation Delimiter'),
     (r'NOOB\b', 'Void Literal'),
     (r'[a-zA-Z][a-zA-Z0-9_]*', 'Variable'),
+    
+    # SYMBOLS / OPERATORS
+    (r'\+', 'Concatenation Operator'),
+    (r'-', 'Subtraction Operator'),
+    (r'\*', 'Multiplication Operator'),
+    (r'/', 'Division Operator'),
+    (r'%', 'Modulo Operator'),
+    (r'=', 'Assignment or Comparison Operator'),
+    (r'\(', 'Left Parenthesis'),
+    (r'\)', 'Right Parenthesis'),
+
 ]
 
 class tokenizer:
@@ -122,24 +134,31 @@ class tokenizer:
             elif not (single_comment or multi_comment):
                 self.tokens.append((token[0], token[1]))
         return self.tokens
-    
 
-
-#test code
-sample_code = '''HAI
-I HAS A var ITZ 10 BTW i love 127
-OBTW
-gutom na ako BTW this shouldnt work
-TLDR
-VISIBLE "var is: " AN var
-KTHXBYE
-'''
-print(len(sample_code))
-# for index in sample_code:
-#     print(index)
-tokenizer_instance = tokenizer(sample_code)
-tokens = tokenizer_instance.tokenize()
-print("Lexeme\t\t\t\t-> Token Type")
-print("-----------------------------------------")
-for token in tokens:
-    print(token[0]+"\t\t\t\t-> "+token[1])
+# Main
+def main():
+    fileCounter = 1
+    filePath = os.path.dirname("project-testcases/")
+    with open("output.txt", "w") as f:
+        # List the files
+        for file in os.listdir(filePath):
+            filename = os.fsdecode(file)
+            # Read file
+            with open(os.path.join(filePath, filename), "r") as file:
+                content = file.read()
+                tokenizer_instance = tokenizer(content)
+                tokens = tokenizer_instance.tokenize()
+                print(f'\n--- FILE {fileCounter} ---')
+                f.write(f'--- FILE {fileCounter} ---\n')
+                print(f'{"Lexeme":20} -> Token Type')
+                f.write(f'{"Lexeme":20} -> Token Type\n')
+                print("-----------------------------------------")
+                f.write("-----------------------------------------\n")
+                for token in tokens:
+                    print(f'{token[0]:20} -> {token[1]}')
+                    f.write(f'{token[0]:20} -> {token[1]}\n')
+                f.write("\n")
+            fileCounter += 1
+            
+if __name__ == "__main__":
+    main()
