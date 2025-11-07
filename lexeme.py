@@ -110,17 +110,17 @@ class tokenizer:
             #start of comment
             elif token[1] == "Single Comment Line" and not (single_comment or multi_comment):
                 single_comment = True
-                self.tokens.append(token[1])
+                self.tokens.append((token[0], token[1]))
             elif token[1] == "Multi Comment Start" and not (single_comment or multi_comment):
                 multi_comment = True
-                self.tokens.append(token[1])
+                self.tokens.append((token[0], token[1]))
             #end multi comment
             elif token[1] == "Multi Comment End": 
                 multi_comment = False
-                self.tokens.append(token[1])
+                self.tokens.append((token[0], token[1]))
             #no comments
             elif not (single_comment or multi_comment):
-                self.tokens.append(token[1])
+                self.tokens.append((token[0], token[1]))
         return self.tokens
     
 
@@ -131,7 +131,7 @@ I HAS A var ITZ 10 BTW i love 127
 OBTW
 gutom na ako BTW this shouldnt work
 TLDR
-VISIBLE "The value of var is: " AN var
+VISIBLE "var is: " AN var
 KTHXBYE
 '''
 print(len(sample_code))
@@ -139,5 +139,7 @@ print(len(sample_code))
 #     print(index)
 tokenizer_instance = tokenizer(sample_code)
 tokens = tokenizer_instance.tokenize()
+print("Lexeme\t\t\t\t-> Token Type")
+print("-----------------------------------------")
 for token in tokens:
-    print(token)
+    print(token[0]+"\t\t\t\t-> "+token[1])
