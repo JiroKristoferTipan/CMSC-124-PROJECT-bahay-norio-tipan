@@ -2,157 +2,215 @@
 Lexeme               -> Token Type
 -----------------------------------------
 BTW                  -> Single Comment Line
-HAI                  -> Code Delimiter
-WAZZUP               -> Variable
+\n                   -> Newline
+HAI                  -> Code Start
+\n                   -> Newline
+WAZZUP               -> Start something
+\n                   -> Newline
 BTW                  -> Single Comment Line
+\n                   -> Newline
 I HAS A              -> Variable Declaration
 monde                -> Variable
+\n                   -> Newline
 I HAS A              -> Variable Declaration
 num                  -> Variable
-ITZ                  -> Variable Assignment
+ITZ                  -> Variable Assignment on Declaration
 17                   -> NUMBR
+\n                   -> Newline
 I HAS A              -> Variable Declaration
 name                 -> Variable
-ITZ                  -> Variable Assignment
+ITZ                  -> Variable Assignment on Declaration
 "seventeen"          -> YARN
+\n                   -> Newline
 I HAS A              -> Variable Declaration
 fnum                 -> Variable
-ITZ                  -> Variable Assignment
+ITZ                  -> Variable Assignment on Declaration
 17.0                 -> NUMBAR
+\n                   -> Newline
 I HAS A              -> Variable Declaration
 flag                 -> Variable
-ITZ                  -> Variable Assignment
+ITZ                  -> Variable Assignment on Declaration
 WIN                  -> TROOF
+\n                   -> Newline
+\n                   -> Newline
 I HAS A              -> Variable Declaration
 sum                  -> Variable
-ITZ                  -> Variable Assignment
-SUM OF               -> Arithmetic Operation
+ITZ                  -> Variable Assignment on Declaration
+SUM OF               -> Add Operation
 num                  -> Variable
 AN                   -> Parameter Delimiter
 13                   -> NUMBR
+\n                   -> Newline
 I HAS A              -> Variable Declaration
 diff                 -> Variable
-ITZ                  -> Variable Assignment
-DIFF OF              -> Arithmetic Operation
+ITZ                  -> Variable Assignment on Declaration
+DIFF OF              -> Subtract Operation
 sum                  -> Variable
 AN                   -> Parameter Delimiter
 17                   -> NUMBR
+\n                   -> Newline
 I HAS A              -> Variable Declaration
 prod                 -> Variable
-ITZ                  -> Variable Assignment
-PRODUKT OF           -> Arithmetic Operation
+ITZ                  -> Variable Assignment on Declaration
+PRODUKT OF           -> Multiply Operation
 3                    -> NUMBR
 AN                   -> Parameter Delimiter
 4                    -> NUMBR
+\n                   -> Newline
 I HAS A              -> Variable Declaration
 quo                  -> Variable
-ITZ                  -> Variable Assignment
-QUOSHUNT OF          -> Arithmetic Operation
+ITZ                  -> Variable Assignment on Declaration
+QUOSHUNT OF          -> Divide Operation
 4                    -> NUMBR
 AN                   -> Parameter Delimiter
 5                    -> NUMBR
-BUHBYE               -> Variable
+\n                   -> Newline
+BUHBYE               -> End something
+\n                   -> Newline
+\n                   -> Newline
 BTW                  -> Single Comment Line
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "declarations"       -> YARN
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 monde                -> Variable
 BTW                  -> Single Comment Line
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 num                  -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 name                 -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 fnum                 -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 flag                 -> Variable
+\n                   -> Newline
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 sum                  -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 diff                 -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 prod                 -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 quo                  -> Variable
+\n                   -> Newline
+\n                   -> Newline
 BTW                  -> Single Comment Line
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-SUM OF               -> Arithmetic Operation
-PRODUKT OF           -> Arithmetic Operation
+SUM OF               -> Add Operation
+PRODUKT OF           -> Multiply Operation
 3                    -> NUMBR
 AN                   -> Parameter Delimiter
 5                    -> NUMBR
 AN                   -> Parameter Delimiter
-BIGGR OF             -> Arithmetic Operation
-DIFF OF              -> Arithmetic Operation
+BIGGR OF             -> Greater Operation
+DIFF OF              -> Subtract Operation
 17                   -> NUMBR
 AN                   -> Parameter Delimiter
 2                    -> NUMBR
 AN                   -> Parameter Delimiter
 5                    -> NUMBR
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-BIGGR OF             -> Arithmetic Operation
-PRODUKT OF           -> Arithmetic Operation
+BIGGR OF             -> Greater Operation
+PRODUKT OF           -> Multiply Operation
 11                   -> NUMBR
 AN                   -> Parameter Delimiter
 2                    -> NUMBR
 AN                   -> Parameter Delimiter
-QUOSHUNT OF          -> Arithmetic Operation
-SUM OF               -> Arithmetic Operation
+QUOSHUNT OF          -> Divide Operation
+SUM OF               -> Add Operation
 3                    -> NUMBR
 AN                   -> Parameter Delimiter
 5                    -> NUMBR
 AN                   -> Parameter Delimiter
 2                    -> NUMBR
-KTHXBYE              -> Code Delimiter
+\n                   -> Newline
+KTHXBYE              -> Code End
 
 --- FILE 2 ---
 Lexeme               -> Token Type
 -----------------------------------------
-HAI                  -> Code Delimiter
-WAZZUP               -> Variable
+HAI                  -> Code Start
+\n                   -> Newline
+WAZZUP               -> Start something
+\n                   -> Newline
 BTW                  -> Single Comment Line
+\n                   -> Newline
 I HAS A              -> Variable Declaration
 monde                -> Variable
+\n                   -> Newline
 I HAS A              -> Variable Declaration
 num                  -> Variable
-ITZ                  -> Variable Assignment
+ITZ                  -> Variable Assignment on Declaration
 17                   -> NUMBR
-BUHBYE               -> Variable
+\n                   -> Newline
+BUHBYE               -> End something
+\n                   -> Newline
+\n                   -> Newline
 GIMMEH               -> Input Keyword
 monde                -> Variable
+\n                   -> Newline
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-SUM OF               -> Arithmetic Operation
+SUM OF               -> Add Operation
 monde                -> Variable
 AN                   -> Parameter Delimiter
 num                  -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 monde                -> Variable
+\n                   -> Newline
+\n                   -> Newline
 GIMMEH               -> Input Keyword
 num                  -> Variable
+\n                   -> Newline
 GIMMEH               -> Input Keyword
 monde                -> Variable
+\n                   -> Newline
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-DIFF OF              -> Arithmetic Operation
+DIFF OF              -> Subtract Operation
 num                  -> Variable
 AN                   -> Parameter Delimiter
 monde                -> Variable
-KTHXBYE              -> Code Delimiter
+\n                   -> Newline
+KTHXBYE              -> Code End
 
 --- FILE 3 ---
 Lexeme               -> Token Type
 -----------------------------------------
-HAI                  -> Code Delimiter
-WAZZUP               -> Variable
+HAI                  -> Code Start
+\n                   -> Newline
+WAZZUP               -> Start something
+\n                   -> Newline
 BTW                  -> Single Comment Line
+\n                   -> Newline
 I HAS A              -> Variable Declaration
 x                    -> Variable
+\n                   -> Newline
 I HAS A              -> Variable Declaration
 y                    -> Variable
-BUHBYE               -> Variable
+\n                   -> Newline
+BUHBYE               -> End something
+\n                   -> Newline
+\n                   -> Newline
 GIMMEH               -> Input Keyword
 x                    -> Variable
+\n                   -> Newline
 GIMMEH               -> Input Keyword
 y                    -> Variable
+\n                   -> Newline
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 x                    -> Variable
 +                    -> INVALID
@@ -162,10 +220,11 @@ y                    -> Variable
 +                    -> INVALID
 " = "                -> YARN
 +                    -> INVALID
-SUM OF               -> Arithmetic Operation
+SUM OF               -> Add Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 x                    -> Variable
 +                    -> INVALID
@@ -175,10 +234,11 @@ y                    -> Variable
 +                    -> INVALID
 " = "                -> YARN
 +                    -> INVALID
-DIFF OF              -> Arithmetic Operation
+DIFF OF              -> Subtract Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 x                    -> Variable
 +                    -> INVALID
@@ -188,10 +248,11 @@ y                    -> Variable
 +                    -> INVALID
 " = "                -> YARN
 +                    -> INVALID
-PRODUKT OF           -> Arithmetic Operation
+PRODUKT OF           -> Multiply Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 x                    -> Variable
 +                    -> INVALID
@@ -201,10 +262,11 @@ y                    -> Variable
 +                    -> INVALID
 " = "                -> YARN
 +                    -> INVALID
-QUOSHUNT OF          -> Arithmetic Operation
+QUOSHUNT OF          -> Divide Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 x                    -> Variable
 +                    -> INVALID
@@ -214,10 +276,12 @@ y                    -> Variable
 +                    -> INVALID
 " = "                -> YARN
 +                    -> INVALID
-MOD OF               -> Arithmetic Operation
+MOD OF               -> Modulo Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
+\n                   -> Newline
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "max("               -> YARN
 +                    -> INVALID
@@ -229,10 +293,11 @@ y                    -> Variable
 +                    -> INVALID
 ") = "               -> YARN
 +                    -> INVALID
-BIGGR OF             -> Arithmetic Operation
+BIGGR OF             -> Greater Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "min("               -> YARN
 +                    -> INVALID
@@ -244,64 +309,124 @@ y                    -> Variable
 +                    -> INVALID
 ") = "               -> YARN
 +                    -> INVALID
-SMALLR OF            -> Arithmetic Operation
+SMALLR OF            -> Lesser Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
+\n                   -> Newline
+\n                   -> Newline
 BTW                  -> Single Comment Line
-BTW                  -> Single Comment Line
-BTW                  -> Single Comment Line
-BTW                  -> Single Comment Line
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-SUM OF               -> Arithmetic Operation
+SUM OF               -> Add Operation
+PRODUKT OF           -> Multiply Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
-SUM OF               -> Arithmetic Operation
-QUOSHUNT OF          -> Arithmetic Operation
+x                    -> Variable
+AN                   -> Parameter Delimiter
+PRODUKT OF           -> Multiply Operation
+y                    -> Variable
+AN                   -> Parameter Delimiter
+y                    -> Variable
+\n                   -> Newline
+BTW                  -> Single Comment Line
+\n                   -> Newline
+VISIBLE              -> Output Keyword
+PRODUKT OF           -> Multiply Operation
+SUM OF               -> Add Operation
+x                    -> Variable
+AN                   -> Parameter Delimiter
+y                    -> Variable
+AN                   -> Parameter Delimiter
+SUM OF               -> Add Operation
+x                    -> Variable
+AN                   -> Parameter Delimiter
+y                    -> Variable
+\n                   -> Newline
+BTW                  -> Single Comment Line
+\n                   -> Newline
+VISIBLE              -> Output Keyword
+DIFF OF              -> Subtract Operation
+BIGGR OF             -> Greater Operation
+x                    -> Variable
+AN                   -> Parameter Delimiter
+y                    -> Variable
+AN                   -> Parameter Delimiter
+SMALLR OF            -> Lesser Operation
+x                    -> Variable
+AN                   -> Parameter Delimiter
+y                    -> Variable
+\n                   -> Newline
+\n                   -> Newline
+BTW                  -> Single Comment Line
+\n                   -> Newline
+VISIBLE              -> Output Keyword
+SUM OF               -> Add Operation
+x                    -> Variable
+AN                   -> Parameter Delimiter
+SUM OF               -> Add Operation
+QUOSHUNT OF          -> Divide Operation
 y                    -> Variable
 AN                   -> Parameter Delimiter
 x                    -> Variable
 AN                   -> Parameter Delimiter
 FAIL                 -> TROOF
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-SUM OF               -> Arithmetic Operation
+SUM OF               -> Add Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
-SUM OF               -> Arithmetic Operation
-QUOSHUNT OF          -> Arithmetic Operation
+SUM OF               -> Add Operation
+QUOSHUNT OF          -> Divide Operation
 "17"                 -> YARN
 AN                   -> Parameter Delimiter
 x                    -> Variable
 AN                   -> Parameter Delimiter
 FAIL                 -> TROOF
-KTHXBYE              -> Code Delimiter
+\n                   -> Newline
+KTHXBYE              -> Code End
 
 --- FILE 4 ---
 Lexeme               -> Token Type
 -----------------------------------------
-HAI                  -> Code Delimiter
-WAZZUP               -> Variable
+HAI                  -> Code Start
+\n                   -> Newline
+WAZZUP               -> Start something
+\n                   -> Newline
 BTW                  -> Single Comment Line
+\n                   -> Newline
 I HAS A              -> Variable Declaration
 x                    -> Variable
+\n                   -> Newline
 I HAS A              -> Variable Declaration
 y                    -> Variable
-BUHBYE               -> Variable
+\n                   -> Newline
+BUHBYE               -> End something
+\n                   -> Newline
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "Hello! Please enter two strings:" -> YARN
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "String 1: "         -> YARN
+\n                   -> Newline
 GIMMEH               -> Input Keyword
 x                    -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "String 2: "         -> YARN
+\n                   -> Newline
 GIMMEH               -> Input Keyword
 y                    -> Variable
+\n                   -> Newline
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 SMOOSH               -> String Concatenation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
+\n                   -> Newline
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 SMOOSH               -> String Concatenation
 x                    -> Variable
@@ -313,15 +438,19 @@ AN                   -> Parameter Delimiter
 y                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
+\n                   -> Newline
+\n                   -> Newline
 x                    -> Variable
 R                    -> Variable Assignment
 SMOOSH               -> String Concatenation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
+\n                   -> Newline
 y                    -> Variable
 R                    -> Variable Assignment
 100                  -> NUMBR
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 x                    -> Variable
 AN                   -> Parameter Delimiter
@@ -329,46 +458,63 @@ AN                   -> Parameter Delimiter
 AN                   -> Parameter Delimiter
 y                    -> Variable
 AN                   -> Parameter Delimiter
-MOD OF               -> Arithmetic Operation
+MOD OF               -> Modulo Operation
 10                   -> NUMBR
 AN                   -> Parameter Delimiter
 6                    -> NUMBR
 AN                   -> Parameter Delimiter
 "End!"               -> YARN
+\n                   -> Newline
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 10                   -> NUMBR
 AN                   -> Parameter Delimiter
 y                    -> Variable
+\n                   -> Newline
 y                    -> Variable
 IS NOW A             -> Typecasting Operation
 NUMBAR               -> Type Literal
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 10                   -> NUMBR
 AN                   -> Parameter Delimiter
 y                    -> Variable
+\n                   -> Newline
+\n                   -> Newline
 y                    -> Variable
 R                    -> Variable Assignment
 0                    -> NUMBR
+\n                   -> Newline
 y                    -> Variable
 R                    -> Variable Assignment
-MAEK A               -> Typecasting Operation
+MAEK                 -> Typecasting Start Operation
+A                    -> Typecasting Value Operation
 y                    -> Variable
 TROOF                -> Type Literal
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 y                    -> Variable
-KTHXBYE              -> Code Delimiter
+\n                   -> Newline
+KTHXBYE              -> Code End
 
 --- FILE 5 ---
 Lexeme               -> Token Type
 -----------------------------------------
-HAI                  -> Code Delimiter
-WAZZUP               -> Variable
+HAI                  -> Code Start
+\n                   -> Newline
+WAZZUP               -> Start something
+\n                   -> Newline
 BTW                  -> Single Comment Line
+\n                   -> Newline
 I HAS A              -> Variable Declaration
 x                    -> Variable
+\n                   -> Newline
 I HAS A              -> Variable Declaration
 y                    -> Variable
-BUHBYE               -> Variable
+\n                   -> Newline
+BUHBYE               -> End something
+\n                   -> Newline
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "x: "                -> YARN
 +                    -> INVALID
@@ -377,32 +523,40 @@ FAIL                 -> TROOF
 ", y: "              -> YARN
 +                    -> INVALID
 WIN                  -> TROOF
+\n                   -> Newline
 x                    -> Variable
 R                    -> Variable Assignment
 WIN                  -> TROOF
+\n                   -> Newline
 y                    -> Variable
 R                    -> Variable Assignment
 WIN                  -> TROOF
+\n                   -> Newline
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-BOTH OF              -> Boolean Operation
+BOTH OF              -> And Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-EITHER OF            -> Boolean Operation
+EITHER OF            -> Or Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-WON OF               -> Boolean Operation
+WON OF               -> Xor Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-NOT                  -> Boolean Operation
+NOT                  -> Not Operation
 x                    -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-ALL OF               -> Boolean Operation
+ALL OF               -> Multi And Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 x                    -> Variable
@@ -411,8 +565,9 @@ x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
 MKAY                 -> Concatenation Delimiter
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-ANY OF               -> Boolean Operation
+ANY OF               -> Multi Or Operation
 y                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
@@ -421,31 +576,35 @@ y                    -> Variable
 AN                   -> Parameter Delimiter
 0                    -> NUMBR
 MKAY                 -> Concatenation Delimiter
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-ANY OF               -> Boolean Operation
-BOTH OF              -> Boolean Operation
+ANY OF               -> Multi Or Operation
+BOTH OF              -> And Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
-EITHER OF            -> Boolean Operation
-NOT                  -> Boolean Operation
+EITHER OF            -> Or Operation
+NOT                  -> Not Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
 AN                   -> Parameter Delimiter
-NOT                  -> Boolean Operation
+NOT                  -> Not Operation
 y                    -> Variable
 MKAY                 -> Concatenation Delimiter
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-BOTH OF              -> Boolean Operation
+BOTH OF              -> And Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
-EITHER OF            -> Boolean Operation
-NOT                  -> Boolean Operation
+EITHER OF            -> Or Operation
+NOT                  -> Not Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
+\n                   -> Newline
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "x: "                -> YARN
 +                    -> INVALID
@@ -454,29 +613,36 @@ FAIL                 -> TROOF
 ", y: "              -> YARN
 +                    -> INVALID
 WIN                  -> TROOF
+\n                   -> Newline
 x                    -> Variable
 R                    -> Variable Assignment
 FAIL                 -> TROOF
+\n                   -> Newline
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-BOTH OF              -> Boolean Operation
+BOTH OF              -> And Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-EITHER OF            -> Boolean Operation
+EITHER OF            -> Or Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-WON OF               -> Boolean Operation
+WON OF               -> Xor Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-NOT                  -> Boolean Operation
+NOT                  -> Not Operation
 x                    -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-ALL OF               -> Boolean Operation
+ALL OF               -> Multi And Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 x                    -> Variable
@@ -485,8 +651,9 @@ x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
 MKAY                 -> Concatenation Delimiter
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-ANY OF               -> Boolean Operation
+ANY OF               -> Multi Or Operation
 y                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
@@ -495,31 +662,35 @@ y                    -> Variable
 AN                   -> Parameter Delimiter
 0                    -> NUMBR
 MKAY                 -> Concatenation Delimiter
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-ANY OF               -> Boolean Operation
-BOTH OF              -> Boolean Operation
+ANY OF               -> Multi Or Operation
+BOTH OF              -> And Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
-EITHER OF            -> Boolean Operation
-NOT                  -> Boolean Operation
+EITHER OF            -> Or Operation
+NOT                  -> Not Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
 AN                   -> Parameter Delimiter
-NOT                  -> Boolean Operation
+NOT                  -> Not Operation
 y                    -> Variable
 MKAY                 -> Concatenation Delimiter
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-BOTH OF              -> Boolean Operation
+BOTH OF              -> And Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
-EITHER OF            -> Boolean Operation
-NOT                  -> Boolean Operation
+EITHER OF            -> Or Operation
+NOT                  -> Not Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
+\n                   -> Newline
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "x: "                -> YARN
 +                    -> INVALID
@@ -528,29 +699,36 @@ FAIL                 -> TROOF
 ", y: "              -> YARN
 +                    -> INVALID
 WIN                  -> TROOF
+\n                   -> Newline
 y                    -> Variable
 R                    -> Variable Assignment
 FAIL                 -> TROOF
+\n                   -> Newline
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-BOTH OF              -> Boolean Operation
+BOTH OF              -> And Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-EITHER OF            -> Boolean Operation
+EITHER OF            -> Or Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-WON OF               -> Boolean Operation
+WON OF               -> Xor Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-NOT                  -> Boolean Operation
+NOT                  -> Not Operation
 x                    -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-ALL OF               -> Boolean Operation
+ALL OF               -> Multi And Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 x                    -> Variable
@@ -559,8 +737,9 @@ x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
 MKAY                 -> Concatenation Delimiter
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-ANY OF               -> Boolean Operation
+ANY OF               -> Multi Or Operation
 y                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
@@ -569,190 +748,281 @@ y                    -> Variable
 AN                   -> Parameter Delimiter
 0                    -> NUMBR
 MKAY                 -> Concatenation Delimiter
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-ANY OF               -> Boolean Operation
-BOTH OF              -> Boolean Operation
+ANY OF               -> Multi Or Operation
+BOTH OF              -> And Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
-EITHER OF            -> Boolean Operation
-NOT                  -> Boolean Operation
+EITHER OF            -> Or Operation
+NOT                  -> Not Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
 AN                   -> Parameter Delimiter
-NOT                  -> Boolean Operation
+NOT                  -> Not Operation
 y                    -> Variable
 MKAY                 -> Concatenation Delimiter
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-BOTH OF              -> Boolean Operation
+BOTH OF              -> And Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
-EITHER OF            -> Boolean Operation
-NOT                  -> Boolean Operation
+EITHER OF            -> Or Operation
+NOT                  -> Not Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
-KTHXBYE              -> Code Delimiter
+\n                   -> Newline
+KTHXBYE              -> Code End
 
 --- FILE 6 ---
 Lexeme               -> Token Type
 -----------------------------------------
-HAI                  -> Code Delimiter
-WAZZUP               -> Variable
+HAI                  -> Code Start
+\n                   -> Newline
+WAZZUP               -> Start something
+\n                   -> Newline
 I HAS A              -> Variable Declaration
 x                    -> Variable
+\n                   -> Newline
 I HAS A              -> Variable Declaration
 y                    -> Variable
-BUHBYE               -> Variable
+\n                   -> Newline
+BUHBYE               -> End something
+\n                   -> Newline
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "Value 1: "          -> YARN
+\n                   -> Newline
 GIMMEH               -> Input Keyword
 x                    -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "Value 2: "          -> YARN
+\n                   -> Newline
 GIMMEH               -> Input Keyword
 y                    -> Variable
+\n                   -> Newline
+\n                   -> Newline
 BTW                  -> Single Comment Line
+\n                   -> Newline
+VISIBLE              -> Output Keyword
+BOTH SAEM            -> Equal Operation
+x                    -> Variable
+AN                   -> Parameter Delimiter
+y                    -> Variable
+\n                   -> Newline
 BTW                  -> Single Comment Line
+\n                   -> Newline
+VISIBLE              -> Output Keyword
+DIFFRINT             -> Unequal Operation
+x                    -> Variable
+AN                   -> Parameter Delimiter
+y                    -> Variable
+\n                   -> Newline
+\n                   -> Newline
 OBTW                 -> Multi Comment Start
 TLDR                 -> Multi Comment End
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-BOTH SAEM            -> Comparison Operation
-BIGGR OF             -> Arithmetic Operation
+BOTH SAEM            -> Equal Operation
+BIGGR OF             -> Greater Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
 AN                   -> Parameter Delimiter
 x                    -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-BOTH SAEM            -> Comparison Operation
+BOTH SAEM            -> Equal Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
-SMALLR OF            -> Arithmetic Operation
+SMALLR OF            -> Lesser Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-DIFFRINT             -> Comparison Operation
-BIGGR OF             -> Arithmetic Operation
+DIFFRINT             -> Unequal Operation
+BIGGR OF             -> Greater Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
 AN                   -> Parameter Delimiter
 x                    -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-DIFFRINT             -> Comparison Operation
+DIFFRINT             -> Unequal Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
-SMALLR OF            -> Arithmetic Operation
+SMALLR OF            -> Lesser Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
-KTHXBYE              -> Code Delimiter
+\n                   -> Newline
+KTHXBYE              -> Code End
 
 --- FILE 7 ---
 Lexeme               -> Token Type
 -----------------------------------------
-HAI                  -> Code Delimiter
-WAZZUP               -> Variable
+HAI                  -> Code Start
+\n                   -> Newline
+WAZZUP               -> Start something
+\n                   -> Newline
 I HAS A              -> Variable Declaration
 choice               -> Variable
+\n                   -> Newline
 I HAS A              -> Variable Declaration
 input                -> Variable
-BUHBYE               -> Variable
+\n                   -> Newline
+BUHBYE               -> End something
+\n                   -> Newline
+\n                   -> Newline
 BTW                  -> Single Comment Line
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "1. Compute age"     -> YARN
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "2. Compute tip"     -> YARN
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "3. Compute square area" -> YARN
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "0. Exit"            -> YARN
+\n                   -> Newline
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "Choice: "           -> YARN
+\n                   -> Newline
 GIMMEH               -> Input Keyword
 choice               -> Variable
-BOTH SAEM            -> Comparison Operation
+\n                   -> Newline
+\n                   -> Newline
+BOTH SAEM            -> Equal Operation
 choice               -> Variable
 AN                   -> Parameter Delimiter
 1                    -> NUMBR
-O RLY?               -> if else
-YA RLY               -> If-then Keyword
+\n                   -> Newline
+O RLY?               -> If Else Start
+\n                   -> Newline
+YA RLY               -> If Keyword
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "Enter birth year: " -> YARN
+\n                   -> Newline
 GIMMEH               -> Input Keyword
 input                -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-DIFF OF              -> Arithmetic Operation
+DIFF OF              -> Subtract Operation
 2022                 -> NUMBR
 AN                   -> Parameter Delimiter
 input                -> Variable
+\n                   -> Newline
 OBTW                 -> Multi Comment Start
 TLDR                 -> Multi Comment End
-NO WAI               -> If-then Keyword
+\n                   -> Newline
+NO WAI               -> Else Keyword
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "Invalid Input!"     -> YARN
-OIC                  -> Exit Keyword
-DIFFRINT             -> Comparison Operation
-BIGGR OF             -> Arithmetic Operation
+\n                   -> Newline
+OIC                  -> If Else End
+\n                   -> Newline
+\n                   -> Newline
+DIFFRINT             -> Unequal Operation
+BIGGR OF             -> Greater Operation
 3                    -> NUMBR
 AN                   -> Parameter Delimiter
 choice               -> Variable
 AN                   -> Parameter Delimiter
 3                    -> NUMBR
-O RLY?               -> if else
-YA RLY               -> If-then Keyword
+\n                   -> Newline
+O RLY?               -> If Else Start
+\n                   -> Newline
+YA RLY               -> If Keyword
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "Invalid input is > 3." -> YARN
-OIC                  -> Exit Keyword
-KTHXBYE              -> Code Delimiter
+\n                   -> Newline
+OIC                  -> If Else End
+\n                   -> Newline
+\n                   -> Newline
+KTHXBYE              -> Code End
 
 --- FILE 8 ---
 Lexeme               -> Token Type
 -----------------------------------------
-HAI                  -> Code Delimiter
-WAZZUP               -> Variable
+HAI                  -> Code Start
+\n                   -> Newline
+WAZZUP               -> Start something
+\n                   -> Newline
 I HAS A              -> Variable Declaration
 choice               -> Variable
+\n                   -> Newline
 I HAS A              -> Variable Declaration
 input                -> Variable
-BUHBYE               -> Variable
+\n                   -> Newline
+BUHBYE               -> End something
+\n                   -> Newline
+\n                   -> Newline
 BTW                  -> Single Comment Line
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "1. Compute age"     -> YARN
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "2. Compute tip"     -> YARN
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "3. Compute square area" -> YARN
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "0. Exit"            -> YARN
+\n                   -> Newline
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "Choice: "           -> YARN
+\n                   -> Newline
 GIMMEH               -> Input Keyword
 choice               -> Variable
+\n                   -> Newline
+\n                   -> Newline
 choice               -> Variable
+\n                   -> Newline
 WTF?                 -> switch
-OMG                  -> Switch-Case Keyword
+\n                   -> Newline
+OMG                  -> Switch Case Keyword
 1                    -> NUMBR
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "Enter birth year: " -> YARN
+\n                   -> Newline
 GIMMEH               -> Input Keyword
 input                -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
-DIFF OF              -> Arithmetic Operation
+DIFF OF              -> Subtract Operation
 2022                 -> NUMBR
 AN                   -> Parameter Delimiter
 input                -> Variable
+\n                   -> Newline
 GTFO                 -> Return Keyword
-OMG                  -> Switch-Case Keyword
+\n                   -> Newline
+OMG                  -> Switch Case Keyword
 2                    -> NUMBR
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "Enter bill cost: "  -> YARN
+\n                   -> Newline
 GIMMEH               -> Input Keyword
 input                -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "Tip: "              -> YARN
 PRODUCKT             -> Variable
@@ -760,94 +1030,137 @@ OF                   -> Variable
 input                -> Variable
 AN                   -> Parameter Delimiter
 0.1                  -> NUMBAR
+\n                   -> Newline
 GTFO                 -> Return Keyword
-OMG                  -> Switch-Case Keyword
+\n                   -> Newline
+OMG                  -> Switch Case Keyword
 3                    -> NUMBR
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "Enter width: "      -> YARN
+\n                   -> Newline
 GIMMEH               -> Input Keyword
 input                -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "Square Area: "      -> YARN
-PRODUKT OF           -> Arithmetic Operation
+PRODUKT OF           -> Multiply Operation
 input                -> Variable
 AN                   -> Parameter Delimiter
 input                -> Variable
+\n                   -> Newline
 GTFO                 -> Return Keyword
-OMG                  -> Switch-Case Keyword
+\n                   -> Newline
+OMG                  -> Switch Case Keyword
 0                    -> NUMBR
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "Goodbye"            -> YARN
-OMGWTF               -> Switch-Case Keyword
+\n                   -> Newline
+OMGWTF               -> Switch Default Keyword
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "Invalid Input!"     -> YARN
-OIC                  -> Exit Keyword
-KTHXBYE              -> Code Delimiter
+\n                   -> Newline
+OIC                  -> If Else End
+\n                   -> Newline
+\n                   -> Newline
+KTHXBYE              -> Code End
 
 --- FILE 9 ---
 Lexeme               -> Token Type
 -----------------------------------------
-HAI                  -> Code Delimiter
-WAZZUP               -> Variable
+HAI                  -> Code Start
+\n                   -> Newline
+WAZZUP               -> Start something
+\n                   -> Newline
 I HAS A              -> Variable Declaration
 num1                 -> Variable
+\n                   -> Newline
 I HAS A              -> Variable Declaration
 num2                 -> Variable
-BUHBYE               -> Variable
+\n                   -> Newline
+BUHBYE               -> End something
+\n                   -> Newline
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "Gimmeh a number: "  -> YARN
+\n                   -> Newline
 GIMMEH               -> Input Keyword
 num1                 -> Variable
+\n                   -> Newline
+\n                   -> Newline
 num2                 -> Variable
 R                    -> Variable Assignment
 0                    -> NUMBR
-IM IN YR             -> Loop Keyword
+\n                   -> Newline
+\n                   -> Newline
+IM IN YR             -> Loop Start Keyword
 asc                  -> Variable
-UPPIN                -> Loop Operation
+UPPIN                -> Increment Operation
 YR                   -> Loop Variable Assignment
 num2                 -> Variable
 WILE                 -> Loop Keyword
-BOTH SAEM            -> Comparison Operation
+BOTH SAEM            -> Equal Operation
 num2                 -> Variable
 AN                   -> Parameter Delimiter
-SMALLR OF            -> Arithmetic Operation
+SMALLR OF            -> Lesser Operation
 num2                 -> Variable
 AN                   -> Parameter Delimiter
 num1                 -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 num2                 -> Variable
-IM OUTTA YR          -> Loop Keyword
+\n                   -> Newline
+IM OUTTA YR          -> Loop End Keyword
 asc                  -> Variable
+\n                   -> Newline
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "***"                -> YARN
-IM IN YR             -> Loop Keyword
+\n                   -> Newline
+\n                   -> Newline
+IM IN YR             -> Loop Start Keyword
 desc                 -> Variable
-NERFIN               -> Loop Operation
+NERFIN               -> Decrement Operation
 YR                   -> Loop Variable Assignment
 num2                 -> Variable
 TIL                  -> Loop Keyword
-BOTH SAEM            -> Comparison Operation
+BOTH SAEM            -> Equal Operation
 num2                 -> Variable
 AN                   -> Parameter Delimiter
 0                    -> NUMBR
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 num2                 -> Variable
-IM OUTTA YR          -> Loop Keyword
+\n                   -> Newline
+IM OUTTA YR          -> Loop End Keyword
 desc                 -> Variable
-KTHXBYE              -> Code Delimiter
+\n                   -> Newline
+\n                   -> Newline
+\n                   -> Newline
+KTHXBYE              -> Code End
 
 --- FILE 10 ---
 Lexeme               -> Token Type
 -----------------------------------------
-HAI                  -> Code Delimiter
-WAZZUP               -> Variable
+HAI                  -> Code Start
+\n                   -> Newline
+\n                   -> Newline
+WAZZUP               -> Start something
+\n                   -> Newline
 I HAS A              -> Variable Declaration
 name                 -> Variable
+\n                   -> Newline
 I HAS A              -> Variable Declaration
 num1                 -> Variable
+\n                   -> Newline
 I HAS A              -> Variable Declaration
 num2                 -> Variable
-BUHBYE               -> Variable
+\n                   -> Newline
+BUHBYE               -> End something
+\n                   -> Newline
+\n                   -> Newline
 HOW IZ I             -> Function Keyword
 addNum               -> Variable
 YR                   -> Loop Variable Assignment
@@ -855,33 +1168,49 @@ x                    -> Variable
 AN                   -> Parameter Delimiter
 YR                   -> Loop Variable Assignment
 y                    -> Variable
+\n                   -> Newline
 FOUND YR             -> Return Keyword
-SUM OF               -> Arithmetic Operation
+SUM OF               -> Add Operation
 x                    -> Variable
 an                   -> Variable
 y                    -> Variable
+\n                   -> Newline
 IF U SAY SO          -> Function Keyword
+\n                   -> Newline
+\n                   -> Newline
 HOW IZ I             -> Function Keyword
 printName            -> Variable
 YR                   -> Loop Variable Assignment
 person               -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 "Hello, "            -> YARN
 +                    -> INVALID
 person               -> Variable
+\n                   -> Newline
 GTFO                 -> Return Keyword
+\n                   -> Newline
 IF U SAY SO          -> Function Keyword
+\n                   -> Newline
+\n                   -> Newline
 HOW IZ I             -> Function Keyword
 printNum             -> Variable
 YR                   -> Loop Variable Assignment
 x                    -> Variable
+\n                   -> Newline
 FOUND YR             -> Return Keyword
 x                    -> Variable
+\n                   -> Newline
 IF U SAY SO          -> Function Keyword
+\n                   -> Newline
+\n                   -> Newline
 GIMMEH               -> Input Keyword
 num1                 -> Variable
+\n                   -> Newline
 GIMMEH               -> Input Keyword
 num2                 -> Variable
+\n                   -> Newline
+\n                   -> Newline
 I IZ                 -> Function Call
 addNum               -> Variable
 YR                   -> Loop Variable Assignment
@@ -889,24 +1218,34 @@ num1                 -> Variable
 AN                   -> Parameter Delimiter
 YR                   -> Loop Variable Assignment
 num2                 -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 IT                   -> Variable
+\n                   -> Newline
+\n                   -> Newline
 GIMMEH               -> Input Keyword
 name                 -> Variable
+\n                   -> Newline
 I IZ                 -> Function Call
 printName            -> Variable
 YR                   -> Loop Variable Assignment
 name                 -> Variable
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 IT                   -> Variable
+\n                   -> Newline
+\n                   -> Newline
 I IZ                 -> Function Call
 printNum             -> Variable
 YR                   -> Loop Variable Assignment
-SUM OF               -> Arithmetic Operation
+SUM OF               -> Add Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 2                    -> NUMBR
+\n                   -> Newline
 VISIBLE              -> Output Keyword
 IT                   -> Variable
-KTHXBYE              -> Code Delimiter
+\n                   -> Newline
+\n                   -> Newline
+KTHXBYE              -> Code End
 

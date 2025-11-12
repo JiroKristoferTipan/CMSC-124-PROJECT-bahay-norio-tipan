@@ -13,6 +13,8 @@ token_patterns = [
     # KEYWORDS
     (r'HAI\b', 'Code Start'),
     (r'KTHXBYE\b', 'Code End'),
+    (r'WAZZUP\b', 'Start something'),
+    (r'BUHBYE\b', 'End something'),
     (r'BTW\b', 'Single Comment Line'),
     (r'OBTW\b', 'Multi Comment Start'),
     (r'TLDR\b', 'Multi Comment End'),
@@ -64,10 +66,11 @@ token_patterns = [
     (r'MKAY\b', 'Concatenation Delimiter'),
     (r'NOOB\b', 'Void Literal'),
     (r'[a-zA-Z][a-zA-Z0-9_]*', 'Variable'),
+    (r'\n', 'Newline'),
     
     # SYMBOLS / OPERATORS
     #(r'\+', 'Concatenation Operator')      #nilagay lang to run file, will be edited in the future
-    (r'[^ ]* ', 'INVALID'),                 #INVALID TOKEN, should catch everything not included in tokens until a whitespace or newline
+    (r'[^ \t\n]+', 'INVALID'),                 #INVALID TOKEN, should catch everything not included in tokens until a whitespace or newline
 ]
 
 class tokenizer:
@@ -83,10 +86,13 @@ class tokenizer:
             regex = re.compile(pattern)
             match = re.match(regex, code[index:])
             if match:
-                lexeme = match.group(0)
+                if match.group(0) == "\n":
+                    lexeme = "\\n"
+                else:
+                    lexeme = match.group(0)
                 #print(lexeme)
                 #move current index after matched lexeme
-                self.current += len(lexeme)
+                self.current += len(match.group(0))
                 return lexeme, token_type
         #no matches
         self.current += 1
@@ -99,10 +105,10 @@ class tokenizer:
         code = self.input_code
         while self.current < len(self.input_code):
             #end single comment
-            if code[self.current] == '\n':
+            if code[self.current] == "\n":
                 single_comment = False
             #ignore white spaces
-            if code[self.current].isspace():
+            if code[self.current] == " " or code[self.current] == "\t":
                 self.current += 1
                 continue
             #compare current with all regex
@@ -127,6 +133,22 @@ class tokenizer:
             elif not (single_comment or multi_comment):
                 self.tokens.append((token[0], token[1]))
         return self.tokens
+    
+def varDeclaration(line):
+    print(line)
+    if line[0] == "Variable Declaration" and line[1] == "Variable":
+        if len(line) == 2:
+            #only instantiation, no assignment
+            return "variable instantiation"
+        elif len(line) >= 4 and line[2] == "Variable Assignment on Declaration" and value(line[3]):
+            #instantiation with assignment
+            return "variable instantiation with assignment"
+        else:
+            return "invalid variable declaration"
+
+def value(line):
+    if line in ["NUMBR", "NUMBAR", "YARN", "TROOF", "NOOB"]:
+        return True
 
 # Main
 def main():
@@ -152,6 +174,46 @@ def main():
                     f.write(f'{token[0]:20} -> {token[1]}\n')
                 f.write("\n")
             fileCounter += 1
+    
+    #temp lang
+    splitlist = []
+    templist = []
+    for item in tokens:
+        if item[1] == "Newline":
+            if templist:
+                splitlist.append(templist)
+                templist = []
+        else :
+            templist.append(item[1])
+    if templist:
+        splitlist.append(templist)
+    print(splitlist)
+    #test 1 only, normally shuold loop thru all
+    testparser = splitlist[2][0]
+    print(testparser)
+    #check start of every statement to see what it wants to do then pass to parser
+    match testparser:
+        case "Code Start":
+            print("Code Start detected")
+        case "Variable Declaration":
+            print(varDeclaration(splitlist[2]))
+        case "Variable Assignment":
+            print("Variable Assignment detected")
+        case _:
+            print("No match, this should not happen")
             
 if __name__ == "__main__":
     main()
+
+# def varDeclaration(line):
+#     if line[0] != "Variable Declaration" and line[1] != "Variable":
+#         if len(line) == 2:
+#             #only instantiation, no assignment
+#             return "variable instantiation"
+#         elif len(line) >= 4 and line[2] == "Variable Assignment on Declaration" and value(line[3]):
+#             #instantiation with assignment
+#             return "variable instantiation with assignment"
+
+# def value(line):
+#     if line in ["NUMBR", "NUMBAR", "YARN", "TROOF", "NOOB"]:
+#         return True
