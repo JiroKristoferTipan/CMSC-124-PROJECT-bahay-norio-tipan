@@ -3,7 +3,7 @@ Lexeme               -> Token Type
 -----------------------------------------
 BTW                  -> Single Comment Line
 \n                   -> Newline
-HAI                  -> Code Start
+AI                   -> Variable
 \n                   -> Newline
 WAZZUP               -> Start something
 \n                   -> Newline
@@ -67,7 +67,6 @@ AN                   -> Parameter Delimiter
 \n                   -> Newline
 BUHBYE               -> End something
 \n                   -> Newline
-\n                   -> Newline
 BTW                  -> Single Comment Line
 \n                   -> Newline
 VISIBLE              -> Output Keyword
@@ -89,7 +88,6 @@ fnum                 -> Variable
 VISIBLE              -> Output Keyword
 flag                 -> Variable
 \n                   -> Newline
-\n                   -> Newline
 VISIBLE              -> Output Keyword
 sum                  -> Variable
 \n                   -> Newline
@@ -101,7 +99,6 @@ prod                 -> Variable
 \n                   -> Newline
 VISIBLE              -> Output Keyword
 quo                  -> Variable
-\n                   -> Newline
 \n                   -> Newline
 BTW                  -> Single Comment Line
 \n                   -> Newline
@@ -135,7 +132,7 @@ AN                   -> Parameter Delimiter
 AN                   -> Parameter Delimiter
 2                    -> NUMBR
 \n                   -> Newline
-KTHXBYE              -> Code End
+THXBYE               -> Variable
 
 --- FILE 2 ---
 Lexeme               -> Token Type
@@ -156,10 +153,8 @@ ITZ                  -> Variable Assignment on Declaration
 \n                   -> Newline
 BUHBYE               -> End something
 \n                   -> Newline
-\n                   -> Newline
 GIMMEH               -> Input Keyword
 monde                -> Variable
-\n                   -> Newline
 \n                   -> Newline
 VISIBLE              -> Output Keyword
 SUM OF               -> Add Operation
@@ -170,13 +165,11 @@ num                  -> Variable
 VISIBLE              -> Output Keyword
 monde                -> Variable
 \n                   -> Newline
-\n                   -> Newline
 GIMMEH               -> Input Keyword
 num                  -> Variable
 \n                   -> Newline
 GIMMEH               -> Input Keyword
 monde                -> Variable
-\n                   -> Newline
 \n                   -> Newline
 VISIBLE              -> Output Keyword
 DIFF OF              -> Subtract Operation
@@ -184,7 +177,7 @@ num                  -> Variable
 AN                   -> Parameter Delimiter
 monde                -> Variable
 \n                   -> Newline
-KTHXBYE              -> Code End
+THXBYE               -> Variable
 
 --- FILE 3 ---
 Lexeme               -> Token Type
@@ -209,7 +202,6 @@ x                    -> Variable
 \n                   -> Newline
 GIMMEH               -> Input Keyword
 y                    -> Variable
-\n                   -> Newline
 \n                   -> Newline
 VISIBLE              -> Output Keyword
 x                    -> Variable
@@ -280,7 +272,6 @@ MOD OF               -> Modulo Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
-\n                   -> Newline
 \n                   -> Newline
 VISIBLE              -> Output Keyword
 "max("               -> YARN
@@ -357,7 +348,6 @@ x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
 \n                   -> Newline
-\n                   -> Newline
 BTW                  -> Single Comment Line
 \n                   -> Newline
 VISIBLE              -> Output Keyword
@@ -384,7 +374,7 @@ x                    -> Variable
 AN                   -> Parameter Delimiter
 FAIL                 -> TROOF
 \n                   -> Newline
-KTHXBYE              -> Code End
+THXBYE               -> Variable
 
 --- FILE 4 ---
 Lexeme               -> Token Type
@@ -419,14 +409,12 @@ VISIBLE              -> Output Keyword
 GIMMEH               -> Input Keyword
 y                    -> Variable
 \n                   -> Newline
-\n                   -> Newline
 VISIBLE              -> Output Keyword
 SMOOSH               -> String Concatenation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
 \n                   -> Newline
-\n                   -> Newline
 VISIBLE              -> Output Keyword
 SMOOSH               -> String Concatenation
 x                    -> Variable
@@ -438,7 +426,6 @@ AN                   -> Parameter Delimiter
 y                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
-\n                   -> Newline
 \n                   -> Newline
 x                    -> Variable
 R                    -> Variable Assignment
@@ -465,7 +452,6 @@ AN                   -> Parameter Delimiter
 AN                   -> Parameter Delimiter
 "End!"               -> YARN
 \n                   -> Newline
-\n                   -> Newline
 VISIBLE              -> Output Keyword
 10                   -> NUMBR
 AN                   -> Parameter Delimiter
@@ -479,7 +465,6 @@ VISIBLE              -> Output Keyword
 10                   -> NUMBR
 AN                   -> Parameter Delimiter
 y                    -> Variable
-\n                   -> Newline
 \n                   -> Newline
 y                    -> Variable
 R                    -> Variable Assignment
@@ -495,7 +480,7 @@ TROOF                -> Type Literal
 VISIBLE              -> Output Keyword
 y                    -> Variable
 \n                   -> Newline
-KTHXBYE              -> Code End
+THXBYE               -> Variable
 
 --- FILE 5 ---
 Lexeme               -> Token Type
@@ -514,7 +499,6 @@ y                    -> Variable
 \n                   -> Newline
 BUHBYE               -> End something
 \n                   -> Newline
-\n                   -> Newline
 VISIBLE              -> Output Keyword
 "x: "                -> YARN
 +                    -> INVALID
@@ -531,7 +515,6 @@ WIN                  -> TROOF
 y                    -> Variable
 R                    -> Variable Assignment
 WIN                  -> TROOF
-\n                   -> Newline
 \n                   -> Newline
 VISIBLE              -> Output Keyword
 BOTH OF              -> And Operation
@@ -604,7 +587,6 @@ x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
 \n                   -> Newline
-\n                   -> Newline
 VISIBLE              -> Output Keyword
 "x: "                -> YARN
 +                    -> INVALID
@@ -617,7 +599,6 @@ WIN                  -> TROOF
 x                    -> Variable
 R                    -> Variable Assignment
 FAIL                 -> TROOF
-\n                   -> Newline
 \n                   -> Newline
 VISIBLE              -> Output Keyword
 BOTH OF              -> And Operation
@@ -690,7 +671,6 @@ x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
 \n                   -> Newline
-\n                   -> Newline
 VISIBLE              -> Output Keyword
 "x: "                -> YARN
 +                    -> INVALID
@@ -703,7 +683,6 @@ WIN                  -> TROOF
 y                    -> Variable
 R                    -> Variable Assignment
 FAIL                 -> TROOF
-\n                   -> Newline
 \n                   -> Newline
 VISIBLE              -> Output Keyword
 BOTH OF              -> And Operation
@@ -776,7 +755,7 @@ x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
 \n                   -> Newline
-KTHXBYE              -> Code End
+THXBYE               -> Variable
 
 --- FILE 6 ---
 Lexeme               -> Token Type
@@ -806,7 +785,6 @@ VISIBLE              -> Output Keyword
 GIMMEH               -> Input Keyword
 y                    -> Variable
 \n                   -> Newline
-\n                   -> Newline
 BTW                  -> Single Comment Line
 \n                   -> Newline
 VISIBLE              -> Output Keyword
@@ -822,7 +800,6 @@ DIFFRINT             -> Unequal Operation
 x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
-\n                   -> Newline
 \n                   -> Newline
 OBTW                 -> Multi Comment Start
 TLDR                 -> Multi Comment End
@@ -863,7 +840,7 @@ x                    -> Variable
 AN                   -> Parameter Delimiter
 y                    -> Variable
 \n                   -> Newline
-KTHXBYE              -> Code End
+THXBYE               -> Variable
 
 --- FILE 7 ---
 Lexeme               -> Token Type
@@ -880,7 +857,6 @@ input                -> Variable
 \n                   -> Newline
 BUHBYE               -> End something
 \n                   -> Newline
-\n                   -> Newline
 BTW                  -> Single Comment Line
 \n                   -> Newline
 VISIBLE              -> Output Keyword
@@ -895,13 +871,11 @@ VISIBLE              -> Output Keyword
 VISIBLE              -> Output Keyword
 "0. Exit"            -> YARN
 \n                   -> Newline
-\n                   -> Newline
 VISIBLE              -> Output Keyword
 "Choice: "           -> YARN
 \n                   -> Newline
 GIMMEH               -> Input Keyword
 choice               -> Variable
-\n                   -> Newline
 \n                   -> Newline
 BOTH SAEM            -> Equal Operation
 choice               -> Variable
@@ -924,8 +898,60 @@ DIFF OF              -> Subtract Operation
 AN                   -> Parameter Delimiter
 input                -> Variable
 \n                   -> Newline
-OBTW                 -> Multi Comment Start
-TLDR                 -> Multi Comment End
+BTW                  -> Single Comment Line
+\n                   -> Newline
+BTW                  -> Single Comment Line
+\n                   -> Newline
+BTW                  -> Single Comment Line
+\n                   -> Newline
+MEBBE                -> Else If Keyword
+BOTH SAEM            -> Equal Operation
+choice               -> Variable
+AN                   -> Parameter Delimiter
+2                    -> NUMBR
+\n                   -> Newline
+VISIBLE              -> Output Keyword
+"Enter bill cost: "  -> YARN
+\n                   -> Newline
+GIMMEH               -> Input Keyword
+input                -> Variable
+\n                   -> Newline
+VISIBLE              -> Output Keyword
+"Tip: "              -> YARN
+PRODUKT OF           -> Multiply Operation
+input                -> Variable
+AN                   -> Parameter Delimiter
+0.1                  -> NUMBAR
+\n                   -> Newline
+MEBBE                -> Else If Keyword
+BOTH SAEM            -> Equal Operation
+choice               -> Variable
+AN                   -> Parameter Delimiter
+3                    -> NUMBR
+\n                   -> Newline
+VISIBLE              -> Output Keyword
+"Enter width: "      -> YARN
+\n                   -> Newline
+GIMMEH               -> Input Keyword
+input                -> Variable
+\n                   -> Newline
+VISIBLE              -> Output Keyword
+"Square Area: "      -> YARN
+PRODUKT OF           -> Multiply Operation
+input                -> Variable
+AN                   -> Parameter Delimiter
+input                -> Variable
+\n                   -> Newline
+MEBBE                -> Else If Keyword
+BOTH SAEM            -> Equal Operation
+choice               -> Variable
+AN                   -> Parameter Delimiter
+0                    -> NUMBR
+\n                   -> Newline
+VISIBLE              -> Output Keyword
+"Goodbye"            -> YARN
+\n                   -> Newline
+LDR                  -> Variable
 \n                   -> Newline
 NO WAI               -> Else Keyword
 \n                   -> Newline
@@ -933,7 +959,6 @@ VISIBLE              -> Output Keyword
 "Invalid Input!"     -> YARN
 \n                   -> Newline
 OIC                  -> If Else End
-\n                   -> Newline
 \n                   -> Newline
 DIFFRINT             -> Unequal Operation
 BIGGR OF             -> Greater Operation
@@ -951,7 +976,6 @@ VISIBLE              -> Output Keyword
 "Invalid input is > 3." -> YARN
 \n                   -> Newline
 OIC                  -> If Else End
-\n                   -> Newline
 \n                   -> Newline
 KTHXBYE              -> Code End
 
@@ -985,13 +1009,11 @@ VISIBLE              -> Output Keyword
 VISIBLE              -> Output Keyword
 "0. Exit"            -> YARN
 \n                   -> Newline
-\n                   -> Newline
 VISIBLE              -> Output Keyword
 "Choice: "           -> YARN
 \n                   -> Newline
 GIMMEH               -> Input Keyword
 choice               -> Variable
-\n                   -> Newline
 \n                   -> Newline
 choice               -> Variable
 \n                   -> Newline
@@ -1064,7 +1086,6 @@ VISIBLE              -> Output Keyword
 \n                   -> Newline
 OIC                  -> If Else End
 \n                   -> Newline
-\n                   -> Newline
 KTHXBYE              -> Code End
 
 --- FILE 9 ---
@@ -1089,11 +1110,9 @@ VISIBLE              -> Output Keyword
 GIMMEH               -> Input Keyword
 num1                 -> Variable
 \n                   -> Newline
-\n                   -> Newline
 num2                 -> Variable
 R                    -> Variable Assignment
 0                    -> NUMBR
-\n                   -> Newline
 \n                   -> Newline
 IM IN YR             -> Loop Start Keyword
 asc                  -> Variable
@@ -1115,10 +1134,8 @@ num2                 -> Variable
 IM OUTTA YR          -> Loop End Keyword
 asc                  -> Variable
 \n                   -> Newline
-\n                   -> Newline
 VISIBLE              -> Output Keyword
 "***"                -> YARN
-\n                   -> Newline
 \n                   -> Newline
 IM IN YR             -> Loop Start Keyword
 desc                 -> Variable
@@ -1138,14 +1155,12 @@ IM OUTTA YR          -> Loop End Keyword
 desc                 -> Variable
 \n                   -> Newline
 \n                   -> Newline
-\n                   -> Newline
-KTHXBYE              -> Code End
+THXBYE               -> Variable
 
 --- FILE 10 ---
 Lexeme               -> Token Type
 -----------------------------------------
 HAI                  -> Code Start
-\n                   -> Newline
 \n                   -> Newline
 WAZZUP               -> Start something
 \n                   -> Newline
@@ -1177,7 +1192,6 @@ y                    -> Variable
 \n                   -> Newline
 IF U SAY SO          -> Function Keyword
 \n                   -> Newline
-\n                   -> Newline
 HOW IZ I             -> Function Keyword
 printName            -> Variable
 YR                   -> Loop Variable Assignment
@@ -1192,7 +1206,6 @@ GTFO                 -> Return Keyword
 \n                   -> Newline
 IF U SAY SO          -> Function Keyword
 \n                   -> Newline
-\n                   -> Newline
 HOW IZ I             -> Function Keyword
 printNum             -> Variable
 YR                   -> Loop Variable Assignment
@@ -1203,13 +1216,11 @@ x                    -> Variable
 \n                   -> Newline
 IF U SAY SO          -> Function Keyword
 \n                   -> Newline
-\n                   -> Newline
 GIMMEH               -> Input Keyword
 num1                 -> Variable
 \n                   -> Newline
 GIMMEH               -> Input Keyword
 num2                 -> Variable
-\n                   -> Newline
 \n                   -> Newline
 I IZ                 -> Function Call
 addNum               -> Variable
@@ -1222,7 +1233,6 @@ num2                 -> Variable
 VISIBLE              -> Output Keyword
 IT                   -> Variable
 \n                   -> Newline
-\n                   -> Newline
 GIMMEH               -> Input Keyword
 name                 -> Variable
 \n                   -> Newline
@@ -1234,7 +1244,6 @@ name                 -> Variable
 VISIBLE              -> Output Keyword
 IT                   -> Variable
 \n                   -> Newline
-\n                   -> Newline
 I IZ                 -> Function Call
 printNum             -> Variable
 YR                   -> Loop Variable Assignment
@@ -1245,7 +1254,6 @@ AN                   -> Parameter Delimiter
 \n                   -> Newline
 VISIBLE              -> Output Keyword
 IT                   -> Variable
-\n                   -> Newline
 \n                   -> Newline
 KTHXBYE              -> Code End
 
