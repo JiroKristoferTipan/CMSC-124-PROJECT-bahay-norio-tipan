@@ -66,7 +66,7 @@ def parse_statement(tokens, current):
         case "Decrement Operation":  # e.g. NERFIN
             current = parse_decrement(tokens, current)
 
-        case "Function Keyword":  # e.g. HOW IZ I
+        case "Function Start":  # e.g. HOW IZ I
             current = parse_function_definition(tokens, current)
 
         case "Return Keyword":  # e.g. GTFO or FOUND YR
@@ -93,10 +93,26 @@ def parse_statement(tokens, current):
 
 
 def parse_expression(tokens, current):
-    if current < len(tokens) and tokens[current][1] in ["NUMBR", "NUMBAR", "YARN", "TROOF", "Variable"]:
+    token_type = tokens[current][1]
+
+    # Literal or variable
+    if token_type in ["YARN", "NUMBR", "NUMBAR", "TROOF", "Variable"]:
         current += 1
-    else:
-        raise SyntaxError(f"Expected expression at token {current}")
+
+    # Math or logic operation
+    elif token_type in [
+        "Add Operation", "Subtract Operation", "Multiply Operation",
+        "Divide Operation", "Modulo Operation", "Equal Operation",
+        "Unequal Operation", "Greater Operation", "Lesser Operation"
+    ]:
+        current += 1  # skip operation keyword
+        current = parse_expression(tokens, current)  # left operand
+
+        if tokens[current][1] != "Parameter Delimiter":  # expect AN
+            raise SyntaxError(f"Expected 'AN' in expression at token {current}")
+        current += 1
+
+        current = parse_expression(tokens, current)  # right operand
     return current
 
 
@@ -243,7 +259,7 @@ def parse_unequal(tokens, current):
     return current
 
 def parse_multi_param(tokens, current):
-    morethan2 = false
+    morethan2 = False
     #check if there actually is an additional parameter or none
     if current >= len(tokens) or tokens[current][1] != "Parameter Delimiter":
         raise SyntaxError(f"Expected 'AN' after first operand at token {current}")
@@ -251,7 +267,7 @@ def parse_multi_param(tokens, current):
     current = parse_expression(tokens, current) #parse additional operand
     #check if more parameters exist, then parse if so
     while current+1 < len(tokens) and tokens[current+1][1] == "Concatenation Delimiter":
-        morethan2 = true
+        morethan2 = True
         current += 1 # Skip 'AN'
         current = parse_expression(tokens, current) #parse additional operand
     #remove 'MKAY' if exists
@@ -332,7 +348,7 @@ def parse_switch(tokens, current):
     return current
 
 def parse_multi_function_param(tokens, current):
-    morethan2 = false
+    morethan2 = False
     #check if there actually is an additional parameter or none
     if current < len(tokens) and tokens[current][1] == "Parameter Delimiter":
         current += 1 # Skip 'AN'
@@ -342,7 +358,7 @@ def parse_multi_function_param(tokens, current):
         current = parse_expression(tokens, current) #parse additional operand
         #check if more parameters exist, then parse if so
         if current+1 < len(tokens) and tokens[current+1][1] == "Concatenation Delimiter":
-            morethan2 = true
+            morethan2 = True
             current += 1 # Skip 'AN'
             if current >= len(tokens) or tokens[current][1] != "Loop Variable Assignment":
                 raise SyntaxError(f"Expected 'YR' after first operand at token {current}")

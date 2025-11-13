@@ -1176,7 +1176,7 @@ num2                 -> Variable
 BUHBYE               -> End something
 \n                   -> Newline
 \n                   -> Newline
-HOW IZ I             -> Function Keyword
+HOW IZ I             -> Function Start
 addNum               -> Variable
 YR                   -> Loop Variable Assignment
 x                    -> Variable
@@ -1190,9 +1190,9 @@ x                    -> Variable
 an                   -> Variable
 y                    -> Variable
 \n                   -> Newline
-IF U SAY SO          -> Function Keyword
+IF U SAY SO          -> Function End
 \n                   -> Newline
-HOW IZ I             -> Function Keyword
+HOW IZ I             -> Function Start
 printName            -> Variable
 YR                   -> Loop Variable Assignment
 person               -> Variable
@@ -1204,9 +1204,9 @@ person               -> Variable
 \n                   -> Newline
 GTFO                 -> Return Keyword
 \n                   -> Newline
-IF U SAY SO          -> Function Keyword
+IF U SAY SO          -> Function End
 \n                   -> Newline
-HOW IZ I             -> Function Keyword
+HOW IZ I             -> Function Start
 printNum             -> Variable
 YR                   -> Loop Variable Assignment
 x                    -> Variable
@@ -1214,7 +1214,7 @@ x                    -> Variable
 FOUND YR             -> Return Keyword
 x                    -> Variable
 \n                   -> Newline
-IF U SAY SO          -> Function Keyword
+IF U SAY SO          -> Function End
 \n                   -> Newline
 GIMMEH               -> Input Keyword
 num1                 -> Variable
