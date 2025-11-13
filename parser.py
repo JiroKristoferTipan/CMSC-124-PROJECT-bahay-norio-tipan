@@ -55,10 +55,10 @@ def parse_statement(tokens, current):
     token_type = tokens[current][1]
 
     if token_type == "Variable Declaration":  # e.g. I HAS A var
-        current = parse_variable_declaration(tokens, current)
+        current = parse_varDeclaration(tokens, current)
 
     elif token_type == "Variable Assignment":  # e.g. var R 10
-        current = parse_assignment(tokens, current)
+        current = parse_varAssignment(tokens, current)
 
     elif token_type == "Output Keyword":  # e.g. VISIBLE "Hello"
         current = parse_output(tokens, current)
@@ -69,6 +69,32 @@ def parse_statement(tokens, current):
     else:
         raise SyntaxError(f"Unexpected token '{tokens[current][0]}' at position {current}")
 
+    return current
+
+def parse_expression(tokens, current):
+    if current < len(tokens) and tokens[current][1] in ["NUMBR", "NUMBAR", "YARN", "TROOF", "Variable"]:
+        current += 1
+    else:
+        raise SyntaxError(f"Expected expression at token {current}")
+    return current
+
+
+def parse_varDeclaration(tokens, current):
+    current += 1  # Skip 'I HAS A'
+
+    # Must have a variable name next
+    if current >= len(tokens) or tokens[current][1] != "Variable":
+        raise SyntaxError(f"Expected variable name after 'I HAS A' at token {current}")
+    var_name = tokens[current][0]
+    current += 1
+
+    # Optional initialization
+    if current < len(tokens) and tokens[current][1] == "Variable Assignment on Declaration":  # ITZ
+        current += 1  # Skip 'ITZ'
+        current = parse_expression(tokens, current)  # Handle expression parsing
+
+    # End of declaration
+    print(f"Declared variable '{var_name}' successfully.")
     return current
     
 def parse_statement_list(tokens, current):
