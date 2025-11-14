@@ -133,5 +133,8 @@ def tokenize(input_code):
         #no comments
         elif not (single_comment or multi_comment):
             tokens.append((token[0], token[1]))
-        index += len(token[0])
+        if token[0] == "\\n":
+            index += 1
+        else:
+            index += len(token[0])
     return tokens

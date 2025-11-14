@@ -9,16 +9,16 @@ def parse_statement(tokens, current):
         
         ## ADD HERE
 
-        case "Addition Operation":  # e.g. SUM OF
+        case "Add Operation":  # e.g. SUM OF
             current = parse_add(tokens, current)
 
-        case "Subtraction Operation":  # e.g. DIFF OF
+        case "Subtract Operation":  # e.g. DIFF OF
             current = parse_subtract(tokens, current)
 
-        case "Multiplication Operation":  # e.g. PRODUKT OF
+        case "Multiply Operation":  # e.g. PRODUKT OF
             current = parse_multiply(tokens, current)
 
-        case "Division Operation":  # e.g. QUOSHUNT OF
+        case "Divide Operation":  # e.g. QUOSHUNT OF
             current = parse_divide(tokens, current)
 
         case "Modulo Operation":  # e.g. MOD OF
@@ -266,7 +266,7 @@ def parse_multi_param(tokens, current):
     current += 1 # Skip 'AN'
     current = parse_expression(tokens, current) #parse additional operand
     #check if more parameters exist, then parse if so
-    while current+1 < len(tokens) and tokens[current+1][1] == "Concatenation Delimiter":
+    while current < len(tokens) and tokens[current][1] == "Parameter Delimiter":
         morethan2 = True
         current += 1 # Skip 'AN'
         current = parse_expression(tokens, current) #parse additional operand
@@ -335,15 +335,19 @@ def parse_decrement(tokens, current):
 
 def parse_switch(tokens, current):
     current += 1  # Skip 'WTF?'
-    while current < len(tokens) and tokens[current][1] != "Switch End":  # e.g. OMG ... OIC
+    while current < len(tokens) and tokens[current][1] not in ["Switch Default Keyword", "If Else End"]:  # e.g. OMGWTF or OIC
         if tokens[current][1] != "Switch Case Keyword":  # e.g. OMG
             raise SyntaxError(f"Expected 'OMG' for switch case at token {current}")
         current += 1  # Skip 'OMG'
         current = parse_expression(tokens, current)  # Parse case expression
         continue
         #ADD CODEBLOCK HERE LATER
-    if current >= len(tokens) and tokens[current][1] != "Switch End":
-        raise SyntaxError(f"Expected 'OIC' to end switch at token {current}")
+    if current >= len(tokens) and tokens[current][1] != "Switch Default Keyword":
+        raise SyntaxError(f"Expected 'OMGWTF' ketword at token {current}")
+    current += 1  # Skip 'OMGWTF'
+    #ADD CODEBLOCK HERE LATER
+    if current >= len(tokens) and tokens[current][1] != "If Else End":
+        raise SyntaxError(f"Expected 'OIC' keyword at token {current}")
     current += 1  # Skip 'OIC'
     return current
 
