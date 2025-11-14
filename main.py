@@ -27,7 +27,7 @@ def main():
                 f.write("\n")
             fileCounter += 1
     
-    parser.parser(tokens)
+    parser.parse_program(tokens)
             
 if __name__ == "__main__":
     main()

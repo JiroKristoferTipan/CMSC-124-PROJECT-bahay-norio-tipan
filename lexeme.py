@@ -57,8 +57,8 @@ token_patterns = [
     (r'TIL\b', 'Loop Keyword'),
     (r'WILE\b', 'Loop Keyword'),
     (r'IM OUTTA YR\b', 'Loop End Keyword'),
-    (r'HOW IZ I\b', 'Function Keyword'),
-    (r'IF U SAY SO\b', 'Function Keyword'),
+    (r'HOW IZ I\b', 'Function Start'),
+    (r'IF U SAY SO\b', 'Function End'),
     (r'GTFO\b', 'Return Keyword'),
     (r'FOUND YR\b', 'Return Keyword'),
     (r'I IZ\b', 'Function Call'),
@@ -133,5 +133,8 @@ def tokenize(input_code):
         #no comments
         elif not (single_comment or multi_comment):
             tokens.append((token[0], token[1]))
-        index += len(token[0])
+        if token[0] == "\\n":
+            index += 1
+        else:
+            index += len(token[0])
     return tokens
