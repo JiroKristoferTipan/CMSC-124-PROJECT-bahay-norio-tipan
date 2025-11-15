@@ -13,7 +13,7 @@ HAI
 
     VISIBLE SMOOSH x AN y
 
-    VISIBLE SMOOSH x AN x AN x AN y AN y
+    VISIBLE SMOOoSH x AN x AN x AN y AN y
 
     x R SMOOSH x AN y
     y R 100
