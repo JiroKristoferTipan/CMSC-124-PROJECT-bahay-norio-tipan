@@ -5,7 +5,7 @@ def parse_program(tokens):
     current = 0
 
     #ignore comments before start of code
-    parse_comments(tokens, current)
+    current = parse_comments(tokens, current)
 
     #must start with 'HAI' :3
     if tokens[current][1] != "Code Start":
@@ -24,31 +24,41 @@ def parse_program(tokens):
 # checks if there are declarations(which should be the 1st line after HAI) and handles it; otherwise go thru every line and check syntax
 def parse_statement_list(tokens, current):
     # remove stuff
-    parse_comments(tokens, current)
+    current = parse_comments(tokens, current)
+    print(tokens[current][1])
 
     #if we need to declare any variables, needs 'WAZZUP'
     if current < len(tokens) and tokens[current][1] == "Start Declarations":
+        current += 1    # this is for 'WAZZUP' keyword
+        current = parse_comments(tokens, current)
         #keep going until 'BUHBYE' found
         while current < len(tokens) and tokens[current][1] != "End Declarations":
             current = parse_declarations(tokens, current)
+            current = parse_comments(tokens, current)
+        current += 1    # this is for 'BUHBYE' keyword
 
     #the rest of the code, must end at 'KTHXBYE'
-    while current < len(tokens) and tokens[current][1] != "Code End":
+    while current <= len(tokens) and tokens[current][1] != "Code End":
         current = parse_statement(tokens, current)
+        current = parse_comments(tokens, current)
+        print("Finished a statement!")
     return current
 
 # code to check if maayos yung declarations
 # ONLY accepts declarations here
 def parse_declarations(tokens, current):
     #check if any comments
-    parse_comments(tokens, current)
+    current = parse_comments(tokens, current)
     if current > len(tokens) or tokens[current][1] != "Variable Declaration":                   # 'I HAS A'
         raise SyntaxError(f"Expected 'I HAS A' at position {current}")
+    current += 1
     if current > len(tokens) or tokens[current][1] != "Variable":                               # variable
         raise SyntaxError(f"Expected variable at position {current}")
+    current += 1
     if current < len(tokens) and tokens[current][1] == "Variable Assignment on Declaration":    # optional assignment
         current += 1                                                                            # 'ITZ'
         current = parse_expression(tokens, current, "Single")                                   # value to assign
+    print("Successfully parsed a declaration!")
     return current
     
 # determines what each statement is, looped by parse_statement_list to check all lines of code
@@ -56,10 +66,14 @@ def parse_declarations(tokens, current):
 # THIS MUST BE DONE FROM THE OUTERMOST OPERATOR IF NESTED SYA WHICH IS LIKELY IN DEFAULT CASE
 def parse_statement(tokens, current):
     #check if any comments
-    parse_comments(tokens, current)
+    current = parse_comments(tokens, current)
     token_type = tokens[current][1]
+    print(token_type)
 
     match token_type:
+        # ignore newlines
+        case "Newline":
+            current += 1
         # these 2 arent rly huge blocks pero di bagay sa expression kase
         # VISIBLE
         case "Input Keyword":
@@ -91,14 +105,12 @@ def parse_statement(tokens, current):
 def parse_yarn(tokens, current, param_type):
     match tokens[current][1]:
         case "String Concatenation":
-            if param_type == "Multi":
-                raise SyntaxError("Cannot nest multi parameter operator with another")
-            else:
-                parse_concatenate(tokens, current)
+            current = parse_concatenate(tokens, current)
 
         #no matches somehow, shouldnt ever go here
         case _:
             raise SyntaxError(f"Expected numbr or numbar data type at position {current}")
+    print("Successfully parsed a yarn!")
     return current
 
 #int value expected
@@ -128,6 +140,7 @@ def parse_numbar(tokens, current, param_type):
         #no matches somehow, shouldnt ever go here
         case _:
             raise SyntaxError(f"Expected numbr or numbar data type at position {current}")
+    print("Successfully parsed a numbr/numbar!")
     return current
 
 #bool value expected
@@ -152,21 +165,15 @@ def parse_troof(tokens, current, param_type):
             current = parse_unequal(tokens, current, param_type)
 
         case "Multi Or Operation":  # e.g. ANY OF
-            if param_type == "Multi":
-                raise SyntaxError("Cannot nest multi parameter operator with another")
-            else:
-                current = parse_multi_or(tokens, current)
+            current = parse_multi_or(tokens, current)
 
         case "Multi And Operation":  # e.g. ALL OF
-            if param_type == "Multi":
-                raise SyntaxError("Cannot nest multi parameter operator with another")
-            else:
-                current = parse_multi_and(tokens, current)
+            current = parse_multi_and(tokens, current)
 
         #no matches somehow, shouldnt ever go here
         case _:
             raise SyntaxError(f"Expected troof data type at position {current}")
-        
+    print("Successfully parsed a troof!")
     return current
 
 # determine what type of data type we are expecting
@@ -178,6 +185,7 @@ def parse_expression(tokens, current, param_type):
 
     # Literal
     if token_type in ["YARN", "NUMBR", "NUMBAR", "TROOF"]:
+        print("SUccessfully parsed a literal!")
         current += 1
 
     # Numbr/Numbar operation
@@ -201,7 +209,7 @@ def parse_expression(tokens, current, param_type):
         if param_type !="Multi":
             current = parse_troof(tokens, current, "Multi") # check if multi trool
         else:
-            raise SyntaxError(f"Cannot nest  infinite arity operators in token {current}")
+            raise SyntaxError(f"Cannot nest infinite arity operators in token {current}")
 
     # String operation (IF YOU HAVE MULTI DO NOT NEST ANOTHER)
     elif token_type in ["String Concatenation"]:
@@ -216,10 +224,13 @@ def parse_expression(tokens, current, param_type):
     
     elif token_type == "Variable":
         #check if reassign value by 'R' or typecast by 'IS NOW A'
-        if current+1 < len(tokens) or tokens[current+1][1] == "Typecasting Operation":
+        if current+1 < len(tokens) and tokens[current+1][1] == "Typecasting Operation":
             current = parse_typecast_isnow(tokens, current)
-        elif current+1 < len(tokens) or tokens[current+1][1] == "Variable Assignment":
+        elif current+1 < len(tokens) and tokens[current+1][1] == "Variable Assignment":
             current = parse_reassign(tokens, current, param_type)
+        else:
+            #its just a variable lmfao
+            current += 1
 
     # not registered token found
     elif token_type == "Invalid":
@@ -238,24 +249,6 @@ def parse_expression(tokens, current, param_type):
 # TODO FOR SEMANTICS: implement actually solving right before return statement if 2 operands are allowed
 # check bottom bool functions for infinite arity
 
-def parse_greater(tokens, current, param_type):
-    current += 1 # Skip 'BIGGR OF'
-    current = parse_expression(tokens, current, param_type) # Parse first operand
-    if current >= len(tokens) or tokens[current][1] != "Parameter Delimiter":
-        raise SyntaxError(f"Expected 'AN' after first operand at token {current}")
-    current += 1 # Skip 'AN'
-    current = parse_expression(tokens, current, param_type) # Parse second operand
-    return current
-
-def parse_lesser(tokens, current, param_type):
-    current += 1 # Skip 'SMALLR OF'
-    current = parse_expression(tokens, current, param_type) # Parse first operand
-    if current >= len(tokens) or tokens[current][1] != "Parameter Delimiter":
-        raise SyntaxError(f"Expected 'AN' after first operand at token {current}")
-    current += 1 # Skip 'AN'
-    current = parse_expression(tokens, current, param_type) # Parse second operand
-    return current
-
 def parse_and(tokens, current, param_type):
     current += 1 # Skip 'BOTH OF'
     current = parse_expression(tokens, current, param_type) # Parse first operand
@@ -263,6 +256,7 @@ def parse_and(tokens, current, param_type):
         raise SyntaxError(f"Expected 'AN' after first operand at token {current}")
     current += 1 # Skip 'AN'
     current = parse_expression(tokens, current, param_type) # Parse second operand
+    print("Successfully parsed an and!")
     return current
 
 def parse_or(tokens, current, param_type):
@@ -272,6 +266,7 @@ def parse_or(tokens, current, param_type):
         raise SyntaxError(f"Expected 'AN' after first operand at token {current}")
     current += 1 # Skip 'AN'
     current = parse_expression(tokens, current, param_type) # Parse second operand
+    print("Successfully parsed an or!")
     return current
 
 def parse_xor(tokens, current, param_type):
@@ -281,11 +276,13 @@ def parse_xor(tokens, current, param_type):
         raise SyntaxError(f"Expected 'AN' after first operand at token {current}")
     current += 1 # Skip 'AN'
     current = parse_expression(tokens, current, param_type) # Parse second operand
+    print("Successfully parsed a xor!")
     return current
 
 def parse_not(tokens, current, param_type):
     current += 1 # Skip 'NOT'
     current = parse_expression(tokens, current, param_type) # Parse first operand
+    print("Successfully parsed a not!")
     return current
 
 def parse_equal(tokens, current, param_type):
@@ -295,6 +292,7 @@ def parse_equal(tokens, current, param_type):
         raise SyntaxError(f"Expected 'AN' after first operand at token {current}")
     current += 1 # Skip 'AN'
     current = parse_expression(tokens, current, param_type) # Parse second operand
+    print("Successfully parsed an equal!")
     return current
 
 def parse_unequal(tokens, current, param_type):
@@ -304,6 +302,7 @@ def parse_unequal(tokens, current, param_type):
         raise SyntaxError(f"Expected 'AN' after first operand at token {current}")
     current += 1 # Skip 'AN'
     current = parse_expression(tokens, current, param_type) # Parse second operand
+    print("Successfully parsed an unequal!")
     return current
 
 # infinite arity operators
@@ -314,12 +313,14 @@ def parse_multi_or(tokens, current):
     current += 1 # Skip 'ANY OF'
     current = parse_expression(tokens, current, "Multi") # Parse first operand
     current = parse_multi_param(tokens, current, "Parameter Delimiter") # Parse additional operands
+    print("Successfully parsed an any!")
     return current
 
 def parse_multi_and(tokens, current):
     current += 1 # Skip 'ALL OF'
     current = parse_expression(tokens, current, "Multi") # Parse first operand
     current = parse_multi_param(tokens, current, "Parameter Delimiter") # Parse additional operands
+    print("Successfully parsed an all!")
     return current
 
 #<-----------------------------------------------------------INT FUNCTIONS--------------------------------------------------------------------->
@@ -329,12 +330,16 @@ def parse_multi_and(tokens, current):
 # TODO FOR SEMANTICS: implement actually solving right before return statement if 2 operands are allowed
 
 def parse_add(tokens, current, param_type):
+    print(tokens[current][1])
     current += 1 # Skip 'SUM OF'
+    print(tokens[current][1])
     current = parse_expression(tokens, current, param_type) # Parse first operand
+    print(tokens[current][1])
     if current >= len(tokens) or tokens[current][1] != "Parameter Delimiter":
         raise SyntaxError(f"Expected 'AN' after first operand at token {current}")
     current += 1 # Skip 'AN'
     current = parse_expression(tokens, current, param_type) # Parse second operand
+    print("Successfully parsed an add!")
     return current
 
 def parse_subtract(tokens, current, param_type):
@@ -344,6 +349,7 @@ def parse_subtract(tokens, current, param_type):
         raise SyntaxError(f"Expected 'AN' after first operand at token {current}")
     current += 1 # Skip 'AN'
     current = parse_expression(tokens, current, param_type) # Parse second operand
+    print("Successfully parsed a sub!")
     return current
 
 def parse_multiply(tokens, current, param_type):
@@ -353,6 +359,7 @@ def parse_multiply(tokens, current, param_type):
         raise SyntaxError(f"Expected 'AN' after first operand at token {current}")
     current += 1 # Skip 'AN'
     current = parse_expression(tokens, current, param_type) # Parse second operand
+    print("Successfully parsed a mult!")
     return current
 
 def parse_divide(tokens, current, param_type):
@@ -362,6 +369,7 @@ def parse_divide(tokens, current, param_type):
         raise SyntaxError(f"Expected 'AN' after first operand at token {current}")
     current += 1 # Skip 'AN'
     current = parse_expression(tokens, current, param_type) # Parse second operand
+    print("Successfully parsed a div!")
     return current
 
 def parse_modulo(tokens, current, param_type):
@@ -371,6 +379,7 @@ def parse_modulo(tokens, current, param_type):
         raise SyntaxError(f"Expected 'AN' after first operand at token {current}")
     current += 1 # Skip 'AN'
     current = parse_expression(tokens, current, param_type) # Parse second operand
+    print("Successfully parsed a mod!")
     return current
 
 def parse_greater(tokens, current, param_type):
@@ -380,6 +389,7 @@ def parse_greater(tokens, current, param_type):
         raise SyntaxError(f"Expected 'AN' after first operand at token {current}")
     current += 1 # Skip 'AN'
     current = parse_expression(tokens, current, param_type) # Parse second operand
+    print("Successfully parsed a greater!")
     return current
 
 def parse_lesser(tokens, current, param_type):
@@ -389,6 +399,7 @@ def parse_lesser(tokens, current, param_type):
         raise SyntaxError(f"Expected 'AN' after first operand at token {current}")
     current += 1 # Skip 'AN'
     current = parse_expression(tokens, current, param_type) # Parse second operand
+    print("Successfully parsed a lesser!")
     return current
 
 #<-----------------------------------------------------------STRING FUNCTIONS--------------------------------------------------------------------->
@@ -403,14 +414,11 @@ def parse_concatenate(tokens, current):
 
     # Expect at least one expression
     current = parse_expression(tokens, current, "Multi")
+    current = parse_multi_param(tokens, current, "Parameter Delimiter") # Parse additional operands
 
-    # Keep parsing expressions until MKAY
-    while current < len(tokens) and tokens[current][1] == "Parameter Delimiter":  # AN
-        current += 1 # remove AN
-        current = parse_expression(tokens, current, "Multi")
 
     # current += 1  # skip MKAY
-    print("Parsed SMOOSH concatenation successfully.")
+    print("Successfully parsed a concat!")
     return current
 
 #<-----------------------------------------------------------VARIABLE FUNCTIONS--------------------------------------------------------------------->
@@ -433,8 +441,9 @@ def parse_typecast_make(tokens, current, param_type):
     if tokens[current][1] != "Type Literal":  # NUMBR | NUMBAR | YARN | TROOF
         raise SyntaxError(f"Expected type literal after 'A' at token {current}")
     current += 1
-
-    print("Parsed <typecast> successfully.")
+    print(current)
+    print("Successfully parsed a typecast!")
+    return current
 
 # actually edits the variable to a new data type
 # SEE 'parse_typecast_make' TO NOT EDIT ORIGINAL VARIABLE
@@ -446,7 +455,7 @@ def parse_typecast_isnow(tokens, current):
     if tokens[current][1] != "Type Literal":
         raise SyntaxError(f"Expected type literal after 'IS NOW A' at token {current}")
     current += 1
-
+    print("Successfully parsed an explicit typecast!")
     return current
 
 # skip var, reassign operator and next expression
@@ -457,7 +466,7 @@ def parse_reassign(tokens, current, param_type):
 
     # parse the new value being assigned
     current = parse_expression(tokens, current, param_type)
-
+    print("Successfully parsed a reassign!")
     return current
 
 #<-----------------------------------------------------------I/O FUNCTIONS--------------------------------------------------------------------->
@@ -469,15 +478,20 @@ def parse_input(tokens, current):
         #save input
         #if we go here, save to what ever the variable is; if not then save to 'IT'
         current += 1
+    print("Successfully parsed an input!")
     return current
 
 # skip operator then read expression
 # TODO FOR SEMANTICS, implicit typecast the expression into string
 def parse_output(tokens, current):
+    print(tokens[current][1])
     current += 1 # 'VISIBLE', should be confirmed in parse_statement
+    print(tokens[current][1])
     current = parse_expression(tokens, current, "Single")
-    current = parse_multi_param(tokens, current, "Concatenation Operator") # Parse additional operands
+    print(tokens[current][1])
+    current = parse_multi_param(tokens, current, "Output Concatenation") # Parse additional operands
     #typecast output of parse expression to string then print
+    print("Successfully parsed an output!")
     return current
 
 #<-----------------------------------------------------------COMMENT FUNCTIONS--------------------------------------------------------------------->
@@ -491,6 +505,10 @@ def parse_comments(tokens, current):
         elif tokens[current][1] == "Multi Comment Start":  # OBTW
             current = parse_multi_comment(tokens, current)
     #if none of these run, no comments exist
+
+    #possible to have a newline, use this to fix
+    while tokens[current][1] == "Newline":
+        current += 1
     return current
 
 # skip keyword then go to next line
@@ -502,7 +520,7 @@ def parse_single_comment(tokens, current):
         current += 1
     #currently at newline, skip it here
     current += 1
-
+    print("Successfully parsed a single comment!")
     return current
 
 # make sure no logic in same line of 'OBTW' and 'TLDR'
@@ -524,21 +542,23 @@ def parse_multi_comment(tokens, current):
         raise SyntaxError(f"Expected 'TLDR' to be isolated by newlines at token {current}")
     current += 1    # this one is for 'TLDR'
     current += 1    # this one is for newline
+    print("Successfully parsed a multi comment!")
     return current
 
 #<-----------------------------------------------------------HELPER FUNCTIONS--------------------------------------------------------------------->
 
 # for operators with at least 2 parameters (multi and, multi or, concatenate)
 # continuously skip separator then next operand until no more separator
-# "Parameter Delimiter" for 'AN', "Concatenation Operator" for '+'
+# "Parameter Delimiter" for 'AN', "Output Concatenation" for '+'
 def parse_multi_param(tokens, current, separator):
     #check if there actually is an additional parameter or none
     if current >= len(tokens) or tokens[current][1] != separator:
-        raise SyntaxError(f"Expected 'AN' after first operand at token {current}")
-    current += 1 # Skip 'AN'
+        return current
+    current += 1 # Skip separator
     current = parse_expression(tokens, current, "Multi") #parse additional operand
+    print(tokens[current][1])
     #check if more parameters exist, then parse if so
     while current < len(tokens) and tokens[current][1] == separator:
-        current += 1 # Skip 'AN'
+        current += 1 # Skip separator
         current = parse_expression(tokens, current, "Multi") #parse additional operand
     return current

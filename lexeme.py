@@ -69,8 +69,8 @@ token_patterns = [
     (r'\n', 'Newline'),
     
     # SYMBOLS / OPERATORS
-    #(r'\+', 'Concatenation Operator')      #nilagay lang to run file, will be edited in the future
-    (r'[^ \t\n]+', 'INVALID'),                 #INVALID TOKEN, should catch everything not included in tokens until a whitespace or newline
+    (r'\+', 'Output Concatenation'),          #nilagay lang to run file, will be edited in the future
+    (r'[^ \t\n]+', 'INVALID'),                  #INVALID TOKEN, should catch everything not included in tokens until a whitespace or newline
 ]
 
 #class tokenizer:
@@ -93,7 +93,7 @@ def match_regex(code, index):
             #print(lexeme)
             #move current index after matched lexeme
             #index += len(match.group(0))
-            print(lexeme, "+", token_type)
+            #print(index, "+", lexeme, "+", token_type)
             return lexeme, token_type
     #no matches
     #index += 1
@@ -138,4 +138,7 @@ def tokenize(input_code):
             index += 1
         else:
             index += len(token[0])
+    print(tokens[0])
+    for index,(lexeme, token_type) in enumerate(tokens):
+        print(index, "+", lexeme, "+", token_type)
     return tokens

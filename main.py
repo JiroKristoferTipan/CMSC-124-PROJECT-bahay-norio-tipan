@@ -24,7 +24,7 @@ def main():
     # print(f'\n--- FILE {fileCounter} ---')
     # fileCounter += 1
     #print(tokens)
-    parser2.parse_program(tokens)
+        parser2.parse_program(tokens)
     #with open("output.txt", "w") as f:
         # # List the files
         # for file in os.listdir(filePath):
@@ -50,8 +50,8 @@ def main():
         #     #print(tokens)
         #     parser.parse_program(tokens)
     
-    parser.parse_program(tokens)
+    #parser.parse_program(tokens)
             
-# if __name__ == "__main__":
-#     main()
-#     run_gui()
+if __name__ == "__main__":
+    main()
+    #run_gui()
