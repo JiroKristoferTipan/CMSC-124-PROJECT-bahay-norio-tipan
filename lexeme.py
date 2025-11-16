@@ -12,8 +12,8 @@ token_patterns = [
     # KEYWORDS
     (r'HAI\b', 'Code Start'),
     (r'KTHXBYE\b', 'Code End'),
-    (r'WAZZUP\b', 'Start something'),
-    (r'BUHBYE\b', 'End something'),
+    (r'WAZZUP\b', 'Start Declarations'),
+    (r'BUHBYE\b', 'End Declarations'),
     (r'BTW\b', 'Single Comment Line'),
     (r'OBTW\b', 'Multi Comment Start'),
     (r'TLDR\b', 'Multi Comment End'),
@@ -64,6 +64,7 @@ token_patterns = [
     (r'I IZ\b', 'Function Call'),
     (r'MKAY\b', 'Concatenation Delimiter'),
     (r'NOOB\b', 'Void Literal'),
+    (r'IT\b', 'Implicit Variable'),
     (r'[a-zA-Z][a-zA-Z0-9_]*', 'Variable'),
     (r'\n', 'Newline'),
     
