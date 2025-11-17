@@ -7,7 +7,7 @@ import os
 def main():
     fileCounter = 1
     filePath = os.path.dirname("project-testcases/")
-    with open("project-testcases/jirotest.lol", "r") as file:
+    with open("project-testcases/06_comparison.lol", "r") as file:
         content = file.read()
         #tokenizer_instance = lexeme.tokenizer(content)
         tokens = lexeme.tokenize(content)

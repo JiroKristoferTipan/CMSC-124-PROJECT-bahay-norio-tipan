@@ -36,6 +36,7 @@ def parse_statement_list(tokens, current):
             current = parse_declarations(tokens, current)
             current = parse_comments(tokens, current)
         current += 1    # this is for 'BUHBYE' keyword
+        current = parse_comments(tokens, current)
 
     #the rest of the code, must end at 'KTHXBYE'
     while current <= len(tokens) and tokens[current][1] != "Code End":
@@ -197,7 +198,7 @@ def parse_expression(tokens, current, param_type):
 
     # Bool single operation
     elif token_type in [
-        "Equal Operation", "Unequal Operation", "And Operartion",
+        "Equal Operation", "Unequal Operation", "And Operation",
         "Or Operation", "Xor Operation", "Not Operation"
     ]:
         current = parse_troof(tokens, current, param_type) # check if single bool
@@ -231,6 +232,14 @@ def parse_expression(tokens, current, param_type):
         else:
             #its just a variable lmfao
             current += 1
+
+    elif token_type == "Concatenation Delimiter":
+        #in a multi arity operator, exit
+        return current
+
+    #maybe still in comment?
+    elif token_type in ["Single Comment Line", "Multi Comment Start", "Multi Comment End"]:
+        current = parse_comments(tokens, current)
 
     # not registered token found
     elif token_type == "Invalid":
@@ -313,6 +322,9 @@ def parse_multi_or(tokens, current):
     current += 1 # Skip 'ANY OF'
     current = parse_expression(tokens, current, "Multi") # Parse first operand
     current = parse_multi_param(tokens, current, "Parameter Delimiter") # Parse additional operands
+    if current >= len(tokens) or tokens[current][1] != "Concatenation Delimiter":
+        raise SyntaxError(f"Expected 'MKAY' after 'ANY OF' in position {current}")
+    current += 1 # skip 'MKAY'
     print("Successfully parsed an any!")
     return current
 
@@ -320,6 +332,9 @@ def parse_multi_and(tokens, current):
     current += 1 # Skip 'ALL OF'
     current = parse_expression(tokens, current, "Multi") # Parse first operand
     current = parse_multi_param(tokens, current, "Parameter Delimiter") # Parse additional operands
+    if current >= len(tokens) or tokens[current][1] != "Concatenation Delimiter":
+        raise SyntaxError(f"Expected 'MKAY' after 'ALL OF' in position {current}")
+    current += 1 # skip 'MKAY'
     print("Successfully parsed an all!")
     return current
 
@@ -527,10 +542,9 @@ def parse_single_comment(tokens, current):
 # do this by checking if they r in between newline tokens since comments dont have tokens
 def parse_multi_comment(tokens, current):
     # OBTW should not be in same line as non comments
-    if current+1 < len(tokens) and tokens[current-1][1] != "Newline" and tokens[current+1][1] != "newline":
+    if current+1 > len(tokens) or tokens[current-1][1] != "Newline":
         raise SyntaxError(f"Expected 'OBTW' to be isolated by newlines at token {current}")
     current += 1    # this one is for 'OBTW'
-    current += 1    # this one is for newline
 
     # Skip all tokens until TLDR
     while current < len(tokens) and tokens[current][1] != "Multi Comment End":
@@ -538,7 +552,7 @@ def parse_multi_comment(tokens, current):
 
     if current >= len(tokens) or tokens[current][1] != "Multi Comment End":
         raise SyntaxError(f"Expected 'TLDR' to close multi-line comment at token {current}")
-    if current+1 < len(tokens) and tokens[current-1][1] != "Newline" and tokens[current+1][1] != "newline":
+    if current+1 > len(tokens) or tokens[current+1][1] != "Newline":
         raise SyntaxError(f"Expected 'TLDR' to be isolated by newlines at token {current}")
     current += 1    # this one is for 'TLDR'
     current += 1    # this one is for newline
@@ -558,7 +572,8 @@ def parse_multi_param(tokens, current, separator):
     current = parse_expression(tokens, current, "Multi") #parse additional operand
     print(tokens[current][1])
     #check if more parameters exist, then parse if so
-    while current < len(tokens) and tokens[current][1] == separator:
+    while current < len(tokens) and (tokens[current][1] == separator):
         current += 1 # Skip separator
         current = parse_expression(tokens, current, "Multi") #parse additional operand
+    
     return current
