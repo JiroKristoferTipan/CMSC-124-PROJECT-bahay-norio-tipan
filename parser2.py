@@ -25,7 +25,6 @@ def parse_program(tokens):
 def parse_statement_list(tokens, current):
     # remove stuff
     current = parse_comments(tokens, current)
-    print(tokens[current][1])
 
     #if we need to declare any variables, needs 'WAZZUP'
     if current < len(tokens) and tokens[current][1] == "Start Declarations":
@@ -66,10 +65,10 @@ def parse_declarations(tokens, current):
 # TODO FOR SEMANTICS: UNLESS THE LINE STARTS WITH USING 'parse_reassign', ALWAYS ASSIGN THE RESULT TO IMPLICIT VARIABLE IT
 # THIS MUST BE DONE FROM THE OUTERMOST OPERATOR IF NESTED SYA WHICH IS LIKELY IN DEFAULT CASE
 def parse_statement(tokens, current):
-    #check if any comments
+    # remove statement before statement
     current = parse_comments(tokens, current)
     token_type = tokens[current][1]
-    print(token_type)
+    print(token_type, "parse_statement")
 
     match token_type:
         # ignore newlines
@@ -86,12 +85,24 @@ def parse_statement(tokens, current):
         
         ## TODO: ADD HERE
         # if else, switch, loops, function
+        case "If Else Start":
+            current = parse_if_structure(tokens, current)
+
+        case "switch":
+            current = parse_switch_structure(tokens, current)
+
+        case "Loop Start Keyword":
+            current = parse_loop(tokens, current)
+
+        case "Function Start":
+            current = parse_function(tokens, current)
 
         # if not a huge block, check what the line does
         # so much cases in expression so i just made it default, do error checking in parse_expression's if else
         case _:  # Default case
             current = parse_expression(tokens, current, "Single")
-
+    # removing comments after statement
+    #current = parse_comments(tokens, current)
     return current
 
 #<-----------------------------------------------------------DETERMINE VAR TYPE--------------------------------------------------------------------->
@@ -186,7 +197,7 @@ def parse_expression(tokens, current, param_type):
 
     # Literal
     if token_type in ["YARN", "NUMBR", "NUMBAR", "TROOF"]:
-        print("SUccessfully parsed a literal!")
+        print("Successfully parsed a literal!")
         current += 1
 
     # Numbr/Numbar operation
@@ -248,7 +259,7 @@ def parse_expression(tokens, current, param_type):
     # Undetected token, idk pano mapupunta dito nilagay ko lang
     else:
         raise SyntaxError(f"Unexpected token '{tokens[current][0]}' at position {current}")
-
+    current = parse_comments(tokens, current)
     return current
 
 #<-----------------------------------------------------------BOOL FUNCTIONS--------------------------------------------------------------------->
@@ -345,11 +356,8 @@ def parse_multi_and(tokens, current):
 # TODO FOR SEMANTICS: implement actually solving right before return statement if 2 operands are allowed
 
 def parse_add(tokens, current, param_type):
-    print(tokens[current][1])
     current += 1 # Skip 'SUM OF'
-    print(tokens[current][1])
     current = parse_expression(tokens, current, param_type) # Parse first operand
-    print(tokens[current][1])
     if current >= len(tokens) or tokens[current][1] != "Parameter Delimiter":
         raise SyntaxError(f"Expected 'AN' after first operand at token {current}")
     current += 1 # Skip 'AN'
@@ -456,7 +464,7 @@ def parse_typecast_make(tokens, current, param_type):
     if tokens[current][1] != "Type Literal":  # NUMBR | NUMBAR | YARN | TROOF
         raise SyntaxError(f"Expected type literal after 'A' at token {current}")
     current += 1
-    print(current)
+    print(current, "typcast")
     print("Successfully parsed a typecast!")
     return current
 
@@ -499,14 +507,217 @@ def parse_input(tokens, current):
 # skip operator then read expression
 # TODO FOR SEMANTICS, implicit typecast the expression into string
 def parse_output(tokens, current):
-    print(tokens[current][1])
     current += 1 # 'VISIBLE', should be confirmed in parse_statement
-    print(tokens[current][1])
     current = parse_expression(tokens, current, "Single")
-    print(tokens[current][1])
     current = parse_multi_param(tokens, current, "Output Concatenation") # Parse additional operands
     #typecast output of parse expression to string then print
     print("Successfully parsed an output!")
+    return current
+
+#<-----------------------------------------------------------CONDITIONAL FUNCTIONS--------------------------------------------------------------------->
+
+def parse_if_structure(tokens, current):
+    # Parse optional condition (if wala then implicit 'IT' is condition)
+    if current < len(tokens) and tokens[current][1] == "Variable":
+        current = parse_expression(tokens, current)
+    current = parse_comments(tokens, current) # remove newlines
+
+    if tokens[current][1] != "If Else Start":  # O RLY?
+        raise SyntaxError(f"Expected 'O RLY?' after condition at token {current}")
+    current += 1
+    current = parse_comments(tokens, current) # remove newlines
+
+    if tokens[current][1] != "If Keyword":  # YA RLY
+        raise SyntaxError(f"Expected 'YA RLY' after 'O RLY?' at token {current}")
+    current += 1
+    current = parse_codeblock(tokens, current)
+
+    # THIS IS OPTIONAL PAGISIPAN KO NALANG TO PAG TAPOS NA SEMANTICS SIGURO
+    # 5. Optional MEBBE (else if) chain
+    # if tokens[current][1] == "Else If Keyword":
+    #     current += 1
+    #     while current < len(tokens) and tokens[current][1] != "Else If Keyword":  # MEBBE
+    #         current = parse_statement(tokens, current)
+
+    # 6. Optional NO WAI (else)
+    if current < len(tokens) and tokens[current][1] == "Else Keyword":  # NO WAI
+        current += 1 # parse 'NO WAI' because codeblock wont
+        current = parse_codeblock(tokens, current)
+
+    print(tokens[current][1], "if")
+    # 7. Expect OIC
+    if current >= len(tokens) or tokens[current][1] != "Conditional End":
+        raise SyntaxError(f"Expected 'OIC' to end if-structure at token {current}")
+    current += 1
+
+    print("Successfully parsed an If-else!")
+    return current
+
+# def parse_multiifelse(tokens, current):
+#     if tokens[current][1] != "Else If Keyword":  # MEBBE
+#         raise SyntaxError(f"Expected 'MEBBE' at token {current}")
+#     current += 1
+
+#     # Condition after MEBBE
+#     current = parse_expression(tokens, current)
+
+#     # Code block for this branch
+#     current = parse_codeblock(tokens, current)
+
+#     print("Parsed <multiifelse> successfully.")
+#     return current
+
+def parse_switch_structure(tokens, current):
+    #parang 'IT' lang ginagamit dito
+    # Parse switch expression first
+    # current = parse_expression(tokens, current)
+
+
+    if tokens[current][1] != "switch":  # WTF?
+        raise SyntaxError(f"Expected 'WTF?' after condition at token {current}")
+    current += 2 # one for 'WTF?' keyword, one for newline
+
+    # Parse all OMG cases
+    while current < len(tokens) and tokens[current][1] == "Switch Case Keyword":  # OMG
+        current = parse_multicase(tokens, current)
+        if current >= len(tokens) or tokens[current][1] != "Switch Default Keyword":
+            current += 1 # parse 'GTFO' 
+        current = parse_comments(tokens, current)
+
+    # Optional default case OMGWTF
+    if current >= len(tokens) or tokens[current][1] != "Switch Default Keyword":  # OMGWTF
+        raise SyntaxError(f"Expected 'OMGWTF' token in position {current}")
+    current += 2 # parse 'OMGWTF' and newline
+    while current < len(tokens) and tokens[current][1] != "Conditional End":
+        current = parse_codeblock(tokens, current)
+
+    # Expect OIC to end
+    if current >= len(tokens) or tokens[current][1] != "Conditional End":  # OIC
+        raise SyntaxError(f"Expected 'OIC' to end switch structure at token {current}")
+    current += 1
+
+    print("Successfully parsed a switch!")
+    return current
+
+def parse_multicase(tokens, current):
+    if tokens[current][1] != "Switch Case Keyword":  # OMG
+        raise SyntaxError(f"Expected 'OMG' at token {current}")
+    current += 1
+
+    # Case value (YARN, NUMBR, TROOF, Variable, etc.)
+    current = parse_expression(tokens, current, "Single")
+
+    # Case code block
+    current = parse_codeblock(tokens, current)
+
+    print("Parsed <multicase> successfully.")
+    return current
+
+#<-----------------------------------------------------------LOOP FUNCTIONS--------------------------------------------------------------------->
+
+def parse_loop_condition(tokens, current):
+    current += 1 # Skip 'IM IN YR'
+    current = parse_expression(tokens, current, "Single") # Parse loop name
+    if current < len(tokens) and tokens[current][1] == "Increment Operation":
+        current = parse_increment(tokens, current)
+    elif current < len(tokens) and tokens[current][1] == "Decrement Operation":
+        current = parse_decrement(tokens, current)
+    
+    return current
+
+def parse_loop(tokens, current):
+    current = parse_loop_condition(tokens, current)
+    current = parse_codeblock(tokens, current)
+    # incase loop never closes
+    if current >= len(tokens) and tokens[current][1] != "Loop End Keyword":
+        raise SyntaxError(f"Expected 'IM OUTTA YR' to end loop at token {current}")
+    current += 1  # Skip 'IM OUTTA YR'
+    return current
+
+def parse_increment(tokens, current):
+    current += 1 # Skip 'UPPIN'
+    if current >= len(tokens) or tokens[current][1] != "Loop Variable Assignment":
+        raise SyntaxError(f"Expected 'YR' after first operand at token {current}")
+    current += 1 # Skip 'YR'
+    current = parse_expression(tokens, current, "Single") # Parse variable
+    # check for optional 'TIL'
+    if current < len(tokens) and (tokens[current][1] == "Loop Keyword"):
+        current += 1 # Skip 'TIL' or 'WILE'
+        current = parse_expression(tokens, current,"Single") # Parse condition
+    return current
+
+def parse_decrement(tokens, current):
+    current += 1 # Skip 'NERFIN'
+    if current >= len(tokens) or tokens[current][1] != "Loop Variable Assignment":
+        raise SyntaxError(f"Expected 'YR' after first operand at token {current}")
+    current += 1 # Skip 'YR'
+    current = parse_expression(tokens, current, "Single") # Parse variable
+    # check for optional 'TIL'
+    if current < len(tokens) and (tokens[current][1] == "Loop Keyword"):
+        current += 1 # Skip 'TIL' or 'WILE'
+        current = parse_expression(tokens, current, "Single") # Parse condition
+    return current
+
+#<-----------------------------------------------------------FUNCTION FUNCTIONS--------------------------------------------------------------------->
+
+def parse_multi_function_param(tokens, current):
+    morethan2 = False
+    #check if there actually is an additional parameter or none
+    if current < len(tokens) and tokens[current][1] == "Parameter Delimiter":
+        current += 1 # Skip 'AN'
+        if current >= len(tokens) or tokens[current][1] != "Loop Variable Assignment":
+            raise SyntaxError(f"Expected 'YR' after first operand at token {current}")
+        current += 1 # Skip 'YR'
+        current = parse_expression(tokens, current) #parse additional operand
+        #check if more parameters exist, then parse if so
+        if current+1 < len(tokens) and tokens[current+1][1] == "Concatenation Delimiter":
+            morethan2 = True
+            current += 1 # Skip 'AN'
+            if current >= len(tokens) or tokens[current][1] != "Loop Variable Assignment":
+                raise SyntaxError(f"Expected 'YR' after first operand at token {current}")
+            current += 1 # Skip 'YR'
+            current = parse_expression(tokens, current) #parse additional operand
+    #remove 'MKAY' if exists
+    if (current >= len(tokens) or tokens[current][1] != "Concatenation Delimiter") and morethan2:
+        raise SyntaxError(f"Expected 'MKAY' after last operand at token {current}")
+    elif morethan2:
+        current += 1 # Skip 'MKAY'
+    return current
+    
+def parse_function_condition(tokens, current):
+    current += 1  # Skip 'HOW IZ I'
+    func_name = tokens[current][0]
+    current = parse_expression(tokens, current)  # Parse function name
+    if current < len(tokens) and tokens[current][1] == "Loop Variable Assignment": # check for params with 'YR'
+        current += 1  # Skip 'YR'
+        current = parse_expression(tokens, current)  # Parse first parameter
+        current = parse_multi_function_param(tokens, current)  # Parse additional parameters
+    return current
+
+def return_value(tokens, current):
+    current += 1  # Skip 'GTFO' or 'FOUND YR'
+    if current < len(tokens) and tokens[current][1] in ["NUMBR", "NUMBAR", "YARN", "TROOF", "Variable"]:
+        current = parse_expression(tokens, current)  # Parse return expression
+    return current
+
+def parse_call_function(tokens, current):
+    current += 1  # Skip 'I IZ'
+    func_name = tokens[current][0]
+    current = parse_expression(tokens, current)  # Parse function name
+    if current < len(tokens) and tokens[current][1] == "Loop Variable Assignment": # check for params with 'YR'
+        current += 1  # Skip 'YR'
+        current = parse_expression(tokens, current)  # Parse first parameter
+        current = parse_multi_function_param(tokens, current)  # Parse additional parameters
+    return current
+
+def parse_function(tokens, current):
+    current = parse_function_condition(tokens, current)
+    while current < len(tokens) and tokens[current][1] != "Function End":  # e.g. IF U SAY SO
+        continue
+        #ADD CODEBLOCK HERE LATER
+    if current >= len(tokens) and tokens[current][1] != "Function End":
+        raise SyntaxError(f"Expected 'IF U SAY SO' to end function at token {current}")
+    current += 1  # Skip 'IF U SAY SO'
     return current
 
 #<-----------------------------------------------------------COMMENT FUNCTIONS--------------------------------------------------------------------->
@@ -570,10 +781,19 @@ def parse_multi_param(tokens, current, separator):
         return current
     current += 1 # Skip separator
     current = parse_expression(tokens, current, "Multi") #parse additional operand
-    print(tokens[current][1])
     #check if more parameters exist, then parse if so
     while current < len(tokens) and (tokens[current][1] == separator):
         current += 1 # Skip separator
         current = parse_expression(tokens, current, "Multi") #parse additional operand
     
+    return current
+
+def parse_codeblock(tokens, current):
+    while current < len(tokens) and tokens[current][1] not in [
+        "Conditional End", "Else If Keyword", "Else Keyword", "Loop End Keyword",
+        "Switch Case Keyword", "Switch Default Keyword", "Code End", "Break Keyword", "Return Keyword"
+    ]:
+        print(tokens[current][1], "codeblock")
+        current = parse_statement(tokens, current)
+    print("Successfully parsed a codeblock!")
     return current
