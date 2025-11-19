@@ -216,6 +216,9 @@ def parse_expression(tokens, current):
     if token_type in ["YARN", "NUMBR", "NUMBAR", "TROOF", "Variable", "Void Literal"]:
         current += 1
         
+        if tokens[current-1][1] == tokens[current][1]:
+            raise SyntaxError(f"Expected a delimeter after a {tokens[current-1][1].lower()} at token {current}")
+        
         # Handle concatenation operator (+)
         while current < len(tokens) and tokens[current][1] == "Concatenation Operator":
             current += 1  # skip +
