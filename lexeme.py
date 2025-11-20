@@ -78,7 +78,7 @@ token_patterns = [
     (r'\+', 'Concatenation Operator'),
     
     # INVALID (MUST BE LAST)
-    (r'[^ \t\n]+', 'INVALID'),
+    (r'[^ \t\n]', 'INVALID'),
 ]
 
 def match_regex(code, index):
@@ -104,7 +104,7 @@ def tokenize(input_code):
             if single_comment:
                 single_comment = False
             if not multi_comment:  # Only add newline token if not in multi-comment
-                tokens.append(("\\n", "Newline"))
+                tokens.append(("\n", "Newline"))
             index += 1
             continue
         
@@ -144,7 +144,7 @@ def tokenize(input_code):
         else:
             # Add token (convert newline for display)
             if lexeme == "\n":
-                tokens.append(("\\n", token_type))
+                tokens.append(("\n", token_type))
             else:
                 tokens.append((lexeme, token_type))
         
