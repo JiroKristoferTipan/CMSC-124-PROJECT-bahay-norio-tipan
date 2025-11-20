@@ -108,6 +108,8 @@ def parse_statement(tokens, current):
 
         # Variable Assignment
         case "Variable":
+            if tokens[current-1][1] == tokens[current][1]:
+                    raise SystemError(f"Expected delimiter after '{tokens[current-1][1].lower()}' at token {current}")
             if current + 1 < len(tokens):
                 next_token = tokens[current + 1][1]
                 if next_token == "Variable Assignment":
