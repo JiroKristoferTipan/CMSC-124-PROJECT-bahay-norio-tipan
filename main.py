@@ -29,12 +29,13 @@ def main():
     #         # f.write("\n")
     #     fileCounter += 1
     
-    with open("project-testcases/01_variables.lol", "r") as file:
+    with open("project-testcases/10_functions.lol", "r") as file:
             content = file.read()
             #tokenizer_instance = lexeme.tokenizer(content)
             tokens = lexeme.tokenize(content)
             print(f'\n--- FILE {fileCounter} ---')
-            print(json.dumps(parser.parse_program(tokens), indent=2))
+            # print(json.dumps(parser.parse_program(tokens), indent=2))
+            parser.parse_program(tokens)
             # f.write(f'--- FILE {fileCounter} ---\n')
             # print(f'{"Lexeme":20} -> Token Type')
             # f.write(f'{"Lexeme":20} -> Token Type\n')
