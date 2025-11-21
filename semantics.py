@@ -38,8 +38,11 @@ def initialize_vars(ast):
                     "value": None,
                     "type": "Variable"
                 }
-                if "value" in dec and dec["value"] is not None:
-                    newvar["value"] = (dec["value"]["value"])
+                if "value" in dec.keys() and dec["value"] is not None:
+                    print(dec)
+                    temp = dec["value"]
+                    print(temp)
+                    newvar["value"] = (temp["value"])
                 declarations.append(newvar)
 
     return declarations
@@ -60,7 +63,6 @@ def set_variable(name, value, vars):
                     var["valueType"] = "YARN"
                 case _:
                     raise SyntaxError("Cannot find data type.")
-            print(var["name"], var["value"])
             return vars
     raise ValueError(f"Variable {name} does not exist")
 
@@ -85,6 +87,11 @@ def eval_expression(expr, vars):
                 value = typecast_to_yarn(eval_expression(exp, vars))
                 x = x + value
             return x
+        
+        case "UnaryOperation":
+            if expr["operator"] == "NOT":
+                x = typecast_to_troof(get_variable(expr["operand"], vars))
+                return not x
 
         case "BinaryOperation":
             return evaluate_binary(expr["operator"], vars, expr)
@@ -114,6 +121,7 @@ def eval_expression(expr, vars):
 def evaluate_binary(operator, vars, expr):
     left = eval_expression(expr["left"], vars)
     right = eval_expression(expr["right"], vars)
+    print(left, right)
     datatype = find_highest_datattype(left, right)
     match operator:
         case "SUM":
@@ -256,14 +264,14 @@ def typecast_to_numbr(operand):
             return operand
         
         case "float":
-            return float(operand)
+            return int(operand)
         
         case "str":
             try:
                 string = int(operand)
                 return string
             except ValueError:
-                print("Cannot typecast int to string.")
+                raise SyntaxError(f"Cannot typecast int to string {operand}.")
 
         case _:
             raise ValueError(f"Unexpected data type {operand} when typecasting to int.")
@@ -280,7 +288,7 @@ def typecast_to_numbar(operand):
             return 1.0
         
         case "int":
-            return int(operand)
+            return float(operand)
         
         case "float":
             return operand
@@ -290,7 +298,7 @@ def typecast_to_numbar(operand):
                 string = float(operand)
                 return string
             except ValueError:
-                print("Cannot typecast int to string.")
+                raise SyntaxError(f"Cannot typecast float to string {operand}.")
 
         case _:
             raise ValueError(f"Unexpected data type {operand} when typecasting to float.")
@@ -310,7 +318,7 @@ def typecast_to_yarn(operand):
             return str(operand)
         
         case "float":
-            return  float(operand)
+            return  str(operand)
         
         case "str":
             return operand
