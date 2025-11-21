@@ -1,3 +1,4 @@
+import semantics
 import parser
 import lexeme
 import os
@@ -34,7 +35,9 @@ def main():
             #tokenizer_instance = lexeme.tokenizer(content)
             tokens = lexeme.tokenize(content)
             print(f'\n--- FILE {fileCounter} ---')
-            print(json.dumps(parser.parse_program(tokens), indent=2))
+            ast = parser.parse_program(tokens)
+            print(json.dumps(ast, indent=2))
+            semantics.run_program(ast)
             # f.write(f'--- FILE {fileCounter} ---\n')
             # print(f'{"Lexeme":20} -> Token Type')
             # f.write(f'{"Lexeme":20} -> Token Type\n')

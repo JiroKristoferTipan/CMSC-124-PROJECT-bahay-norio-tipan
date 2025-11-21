@@ -747,188 +747,188 @@ def parse_call_function(tokens, current):
         "arguments": arguments
     }, current
 
-def solve_numbr(operator, operand1, operand2):
-    match operator:
-        case "+":
-            return typecast_to_numbr(operand1) + typecast_to_numbr(operand2)
+# def solve_numbr(operator, operand1, operand2):
+#     match operator:
+#         case "+":
+#             return typecast_to_numbr(operand1) + typecast_to_numbr(operand2)
         
-        case "-":
-            return typecast_to_numbr(operand1) - typecast_to_numbr(operand2)
+#         case "-":
+#             return typecast_to_numbr(operand1) - typecast_to_numbr(operand2)
         
-        case "*":
-            return typecast_to_numbr(operand1) * typecast_to_numbr(operand2)
+#         case "*":
+#             return typecast_to_numbr(operand1) * typecast_to_numbr(operand2)
         
-        case "/":
-            return typecast_to_numbr(operand1) / typecast_to_numbr(operand2)
+#         case "/":
+#             return typecast_to_numbr(operand1) / typecast_to_numbr(operand2)
         
-        case "%":
-            return typecast_to_numbr(operand1) % typecast_to_numbr(operand2)
+#         case "%":
+#             return typecast_to_numbr(operand1) % typecast_to_numbr(operand2)
         
-        case _:
-            raise SyntaxError(f"Unexpected value when solving int operation.")
+#         case _:
+#             raise SyntaxError(f"Unexpected value when solving int operation.")
 
-def solve_numbar(operator, operand1, operand2):
-    match operator:
-        case "+":
-            return typecast_to_numbar(operand1) + typecast_to_numbar(operand2)
+# def solve_numbar(operator, operand1, operand2):
+#     match operator:
+#         case "+":
+#             return typecast_to_numbar(operand1) + typecast_to_numbar(operand2)
         
-        case "-":
-            return typecast_to_numbar(operand1) - typecast_to_numbar(operand2)
+#         case "-":
+#             return typecast_to_numbar(operand1) - typecast_to_numbar(operand2)
         
-        case "*":
-            return typecast_to_numbar(operand1) * typecast_to_numbar(operand2)
+#         case "*":
+#             return typecast_to_numbar(operand1) * typecast_to_numbar(operand2)
         
-        case "/":
-            return typecast_to_numbar(operand1) / typecast_to_numbar(operand2)
+#         case "/":
+#             return typecast_to_numbar(operand1) / typecast_to_numbar(operand2)
         
-        case "%":
-            return typecast_to_numbar(operand1) % typecast_to_numbar(operand2)
+#         case "%":
+#             return typecast_to_numbar(operand1) % typecast_to_numbar(operand2)
         
-        case _:
-            raise SyntaxError(f"Unexpected value when solving int operation.")
+#         case _:
+#             raise SyntaxError(f"Unexpected value when solving int operation.")
 
-def solve_troof(operator, operand1, operand2):
-    if operand2 == None:
-        match operator:
-            case "!":
-                return not typecast_to_troof(operand1)
+# def solve_troof(operator, operand1, operand2):
+#     if operand2 == None:
+#         match operator:
+#             case "!":
+#                 return not typecast_to_troof(operand1)
             
-            case "&&&":
-                return typecast_to_troof(operand1)
+#             case "&&&":
+#                 return typecast_to_troof(operand1)
             
-            case "|||":
-                return typecast_to_troof(operand1)
+#             case "|||":
+#                 return typecast_to_troof(operand1)
             
-            case _:
-                raise SyntaxError(f"Unexpected value when solving bool operation.")
-    else:
-        match operator:
-            case "&&":
-                return typecast_to_troof(operand1) and typecast_to_troof(operand2)
+#             case _:
+#                 raise SyntaxError(f"Unexpected value when solving bool operation.")
+#     else:
+#         match operator:
+#             case "&&":
+#                 return typecast_to_troof(operand1) and typecast_to_troof(operand2)
             
-            case "||":
-                return typecast_to_troof(operand1) or typecast_to_troof(operand2)
+#             case "||":
+#                 return typecast_to_troof(operand1) or typecast_to_troof(operand2)
             
-            case "^":
-                return (typecast_to_troof(operand1) and not typecast_to_troof(operand2)) or (not typecast_to_troof(operand1) and typecast_to_troof(operand2))
+#             case "^":
+#                 return (typecast_to_troof(operand1) and not typecast_to_troof(operand2)) or (not typecast_to_troof(operand1) and typecast_to_troof(operand2))
             
-            case "==":
-                return (typecast_to_numbar(operand1) == typecast_to_numbar(operand2))
+#             case "==":
+#                 return (typecast_to_numbar(operand1) == typecast_to_numbar(operand2))
             
-            case "!=":
-                return (typecast_to_numbar(operand1) != typecast_to_numbar(operand2))
+#             case "!=":
+#                 return (typecast_to_numbar(operand1) != typecast_to_numbar(operand2))
             
-            case ">":
-                return (typecast_to_numbar(operand1) > typecast_to_numbar(operand2))
+#             case ">":
+#                 return (typecast_to_numbar(operand1) > typecast_to_numbar(operand2))
             
-            case "<":
-                return (typecast_to_numbar(operand1) < typecast_to_numbar(operand2))
+#             case "<":
+#                 return (typecast_to_numbar(operand1) < typecast_to_numbar(operand2))
             
-            case _:
-                raise SyntaxError("Unexpected value when typecasting bool operation.")
+#             case _:
+#                 raise SyntaxError("Unexpected value when typecasting bool operation.")
 
-def typecast_to_troof(operand):
-    operandtype = type(operand)
-    match operandtype:
-        case None:
-            return False
+# def typecast_to_troof(operand):
+#     operandtype = type(operand)
+#     match operandtype:
+#         case None:
+#             return False
         
-        case bool():
-            return operand
+#         case bool():
+#             return operand
         
-        case int():
-            if operand == 0:
-                return False
-            return True
+#         case int():
+#             if operand == 0:
+#                 return False
+#             return True
         
-        case float():
-            if operand == 0:
-                return False
-            return True
+#         case float():
+#             if operand == 0:
+#                 return False
+#             return True
         
-        case str():
-            if operand == "":
-                return False
-            return True
+#         case str():
+#             if operand == "":
+#                 return False
+#             return True
 
-        case _:
-            raise ValueError(f"Expected data type when typecasting to bool.")
+#         case _:
+#             raise ValueError(f"Expected data type when typecasting to bool.")
         
-def typecast_to_numbr(operand):
-    operandtype = type(operand)
-    match operandtype:
-        case None:
-            raise ValueError(f"{operand} cannot be typecasted to int.")
+# def typecast_to_numbr(operand):
+#     operandtype = type(operand)
+#     match operandtype:
+#         case None:
+#             raise ValueError(f"{operand} cannot be typecasted to int.")
         
-        case bool():
-            if operand == False:
-                return 0
-            return 1
+#         case bool():
+#             if operand == False:
+#                 return 0
+#             return 1
         
-        case int():
-            return operand
+#         case int():
+#             return operand
         
-        case float():
-            return float(operand)
+#         case float():
+#             return float(operand)
         
-        case str():
-            try:
-                string = int(operand)
-                return string
-            except ValueError:
-                print("Cannot typecast int to string.")
-            return
+#         case str():
+#             try:
+#                 string = int(operand)
+#                 return string
+#             except ValueError:
+#                 print("Cannot typecast int to string.")
+#             return
 
-        case _:
-            raise ValueError(f"Expected data type when typecasting to int.")
+#         case _:
+#             raise ValueError(f"Expected data type when typecasting to int.")
         
-def typecast_to_numbar(operand):
-    operandtype = type(operand)
-    match operandtype:
-        case None:
-            raise ValueError(f"{operand} cannot be typecasted to float.")
+# def typecast_to_numbar(operand):
+#     operandtype = type(operand)
+#     match operandtype:
+#         case None:
+#             raise ValueError(f"{operand} cannot be typecasted to float.")
         
-        case bool():
-            if operand == False:
-                return 0
-            return 1.0
+#         case bool():
+#             if operand == False:
+#                 return 0
+#             return 1.0
         
-        case int():
-            return int(operand)
+#         case int():
+#             return int(operand)
         
-        case float():
-            return operand
+#         case float():
+#             return operand
         
-        case str():
-            try:
-                string = float(operand)
-                return string
-            except ValueError:
-                print("Cannot typecast int to string.")
-            return
+#         case str():
+#             try:
+#                 string = float(operand)
+#                 return string
+#             except ValueError:
+#                 print("Cannot typecast int to string.")
+#             return
 
-        case _:
-            raise ValueError(f"Expected data type when typecasting to float.")
+#         case _:
+#             raise ValueError(f"Expected data type when typecasting to float.")
         
-def typecast_to_yarn(operand):
-    operandtype = type(operand)
-    match operandtype:
-        case None:
-            raise ValueError(f"{operand} cannot be typecasted to string.")
+# def typecast_to_yarn(operand):
+#     operandtype = type(operand)
+#     match operandtype:
+#         case None:
+#             raise ValueError(f"{operand} cannot be typecasted to string.")
         
-        case bool():
-            if operand in ["", "0"]:
-                return False
-            return True
+#         case bool():
+#             if operand in ["", "0"]:
+#                 return False
+#             return True
         
-        case int():
-            return str(operand)
+#         case int():
+#             return str(operand)
         
-        case float():
-            return  float(operand)
+#         case float():
+#             return  float(operand)
         
-        case str():
-            return operand
+#         case str():
+#             return operand
 
-        case _:
-            raise SyntaxError(f"Expected data type when typecasting to string.")
+#         case _:
+#             raise SyntaxError(f"Expected data type when typecasting to string.")

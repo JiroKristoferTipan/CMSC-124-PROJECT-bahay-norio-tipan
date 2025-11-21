@@ -1,0 +1,246 @@
+def run_program(ast):
+    symbol_table = initialize_vars(ast)
+    for line in ast["body"]:
+        run_line(line, symbol_table)
+
+def run_line(ast, vars):
+    match ast["type"]:
+        case "VariableInitSection":
+            return
+        case "Output":
+            x = ""
+            for expr in ast["expressions"]:
+                value = typecast_to_yarn(eval_expression(expr, vars))
+                x = x + value
+            print(x)
+        case "Input":
+            var = input()
+            set_variable(ast["variable"], var, vars)
+        case "Concatenation":
+            x = ""
+            for expr in ast["expressions"]:
+                value = typecast_to_yarn(eval_expression(expr, vars))
+                x = x + value
+        case "Assignment":
+            value = eval_expression(ast["value"], vars)
+            set_variable(ast["variable"], value, vars)
+
+        
+
+def initialize_vars(ast):
+    declarations = []
+
+    for node in ast["body"]:
+        if node["type"] == "VariableInitSection":
+            for dec in node["declarations"]:
+                newvar = {
+                    "name": dec["name"],
+                    "value": None,
+                    "type": "Variable"
+                }
+                if "value" in dec and dec["value"] is not None:
+                    newvar["value"] = (dec["value"]["value"])
+                declarations.append(newvar)
+
+    return declarations
+
+def set_variable(name, value, vars):
+    for var in vars:
+        if var["name"] == name:
+            var["value"] = value
+            vartype = type(value).__name__
+            match vartype:
+                case "bool":
+                    var["valueType"] = "TROOF"
+                case "int":
+                    var["valueType"] = "NUMBR"
+                case "float":
+                    var["valueType"] = "NUMBAR"
+                case "str":
+                    var["valueType"] = "YARN"
+                case _:
+                    raise SyntaxError("Cannot find data type.")
+            return vars
+    raise ValueError(f"Variable {name} does not exist")
+
+def get_variable(name, vars):
+    for var in vars:
+        if var["name"] == name:
+            return var["value"]
+    raise ValueError(f"Variable {name} not yet initialized")
+
+def eval_expression(expr, vars):
+    match expr["type"]:
+
+        case "Literal":
+            return expr["value"]
+
+        case "Variable":
+            return get_variable(expr["name"], vars)
+        
+        case "Concatenation":
+            x = ""
+            for exp in expr["expressions"]:
+                value = typecast_to_yarn(eval_expression(exp, vars))
+                x = x + value
+            return x
+
+        case "BinaryOperation":
+            return evaluate_binary(expr["operator"], vars, expr)
+        
+        case "TypecastExpression":
+            var = expr["variable"]
+            varType = expr["targetType"]
+            value = get_variable(expr["variable"], vars)
+            match varType:
+                case "TROOF":
+                    varValue = typecast_to_troof(value)
+                    set_variable(var, varValue, vars)
+                case "NUMBR":
+                    varValue = typecast_to_numbr(value)
+                    set_variable(var, varValue, vars)
+                case "NUMBAR":
+                    varValue = typecast_to_numbar(value)
+                    set_variable(var, varValue, vars)
+                case "YARN":
+                    varValue = typecast_to_yarn(value)
+                    set_variable(var, varValue, vars)
+            return varValue
+
+        case _:
+            raise Exception(f"Unknown expression type {expr}.")
+        
+def evaluate_binary(operator, vars, expr):
+    left = eval_expression(expr["left"], vars)
+    right = eval_expression(expr["right"], vars)
+    match operator:
+        case "SUM":
+            return typecast_to_numbr(left) + typecast_to_numbr(right)
+        case "DIFF":
+            return typecast_to_numbr(left) - typecast_to_numbr(right)
+        case "PRODUKT":
+            return typecast_to_numbr(left) * typecast_to_numbr(right)
+        case "QUOSHUNT":
+            return typecast_to_numbr(left) / typecast_to_numbr(right)
+        case "MOD":
+            return typecast_to_numbr(left) % typecast_to_numbr(right)
+        case "BIGGR":
+            return typecast_to_numbr(left) > typecast_to_numbr(right)
+        case "SMALLR":
+            return typecast_to_numbr(left) < typecast_to_numbr(right)
+        case "BOTH SAEM":
+            return typecast_to_troof(left) == typecast_to_troof(right)
+        case "DIFFRINT":
+            return typecast_to_troof(left) != typecast_to_troof(right)
+        case "BOTH":
+            return typecast_to_troof(left) and typecast_to_troof(right)
+        case "EITHER":
+            return typecast_to_troof(left) or typecast_to_troof(right)
+        case "WON":
+            return (not typecast_to_troof(left) and typecast_to_troof(right)) or (typecast_to_troof(left) and not typecast_to_troof(right))
+        case _:
+            raise SyntaxError(f"Unexpected binary operation.")
+        
+def typecast_to_troof(operand):
+    operandtype = type(operand).__name__
+    match operandtype:
+        case None:
+            return False
+        
+        case "bool":
+            return operand
+        
+        case "int":
+            if operand == 0:
+                return False
+            return True
+        
+        case "float":
+            if operand == 0:
+                return False
+            return True
+        
+        case "str":
+            if operand in ["", "0"]:
+                return False
+            return True
+
+        case _:
+            raise ValueError(f"Expected data type when typecasting to bool.")
+        
+def typecast_to_numbr(operand):
+    operandtype = type(operand).__name__
+    match operandtype:
+        case None:
+            raise ValueError(f"{operand} cannot be typecasted to int.")
+        
+        case "bool":
+            if operand == False:
+                return 0
+            return 1
+        
+        case "int":
+            return operand
+        
+        case "float":
+            return float(operand)
+        
+        case "str":
+            try:
+                string = int(operand)
+                return string
+            except ValueError:
+                print("Cannot typecast int to string.")
+
+        case _:
+            raise ValueError(f"Expected data type when typecasting to int.")
+        
+def typecast_to_numbar(operand):
+    operandtype = type(operand).__name__
+    match operandtype:
+        case None:
+            raise ValueError(f"{operand} cannot be typecasted to float.")
+        
+        case "bool":
+            if operand == False:
+                return 0
+            return 1.0
+        
+        case "int":
+            return int(operand)
+        
+        case "float":
+            return operand
+        
+        case "str":
+            try:
+                string = float(operand)
+                return string
+            except ValueError:
+                print("Cannot typecast int to string.")
+
+        case _:
+            raise ValueError(f"Expected data type when typecasting to float.")
+        
+def typecast_to_yarn(operand):
+    operandtype = type(operand).__name__
+    match operandtype:
+        case None:
+            raise ValueError(f"{operand} cannot be typecasted to string.")
+        
+        case "bool":
+            if operand:
+                return "WIN"
+            return "FAIL"
+        
+        case "int":
+            return str(operand)
+        
+        case "float":
+            return  float(operand)
+        
+        case "str":
+            return operand
+
+        case _:
+            raise SyntaxError(f"Expected data type when typecasting to string.")
