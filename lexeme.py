@@ -87,9 +87,38 @@ def match_regex(code, index):
         regex = re.compile(pattern)
         match = re.match(regex, code[index:])
         if match:
-            lexeme = match.group(0)
-            return lexeme, token_type
+            index = match.group(0)
+            lexeme, ttype = typecast(index)
+            if token_type == "YARN":
+                return lexeme, ttype, len(index)
+            else:
+                return lexeme, token_type, len(index)
     return None, None
+
+def typecast(lexeme):
+    if lexeme == None:
+        return None, "NOOB"
+    # check for bool
+    if lexeme == "WIN":
+        return True, "TROOF"
+    elif lexeme == "FAIL":
+        return False, "TROOF"
+    
+    num = lexeme.replace('"', '')
+
+    # check for float
+    try:
+        return float(num), "NUMBAR"
+    except:
+        pass
+    try:
+        return int(num), "NUMBR"
+    except:
+        pass
+
+    # no catches, likely string
+    return lexeme, "YARN"
+    
 
 def tokenize(input_code):
     """Tokenize LOLCODE input."""
@@ -120,13 +149,13 @@ def tokenize(input_code):
             if token[0] and token[1] == "Multi Comment End":
                 multi_comment = False
                 tokens.append(token)
-                index += len(token[0])
+                index += len(token[2])
             else:
                 index += 1
             continue
         
         # Match token
-        lexeme, token_type = match_regex(input_code, index)
+        lexeme, token_type, length = match_regex(input_code, index)
         
         if lexeme is None:
             # This shouldn't happen with INVALID pattern, but just in case
@@ -149,6 +178,6 @@ def tokenize(input_code):
                 tokens.append((lexeme, token_type))
         
         # Advance index
-        index += len(lexeme)
+        index += length
     
     return tokens

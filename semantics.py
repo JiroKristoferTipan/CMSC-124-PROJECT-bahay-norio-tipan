@@ -1,7 +1,20 @@
+import json
+import re
+
+symbol_table = {}
+
 def run_program(ast):
-    symbol_table = initialize_vars(ast)
+    #print(json.dumps(ast["body"][0], indent=2))
+    if ast["body"][0]["type"] == "VariableInitSection":
+        node = ast["body"][0]
+        for dec in node["declarations"]:
+            initialize_var(dec)
+            #print(symbol_table)
+    #print(symbol_table)
     for line in ast["body"]:
         run_line(line, symbol_table)
+
+    return symbol_table
 
 def run_line(ast, vars):
     match ast["type"]:
@@ -15,7 +28,8 @@ def run_line(ast, vars):
             print(x)
         case "Input":
             var = input()
-            set_variable(ast["variable"], var, vars)
+            symbol_table[ast["variable"]] = var
+            #print(symbol_table)
         case "Concatenation":
             x = ""
             for expr in ast["expressions"]:
@@ -23,48 +37,36 @@ def run_line(ast, vars):
                 x = x + value
         case "Assignment":
             value = eval_expression(ast["value"], vars)
-            set_variable(ast["variable"], value, vars)
+            symbol_table[ast["variable"]] = value
+            #set_variable(ast["variable"], value, vars)
 
         
 
-def initialize_vars(ast):
-    declarations = []
-
-    for node in ast["body"]:
-        if node["type"] == "VariableInitSection":
-            for dec in node["declarations"]:
-                newvar = {
-                    "name": dec["name"],
-                    "value": None,
-                    "type": "Variable"
-                }
-                if "value" in dec.keys() and dec["value"] is not None:
-                    print(dec)
-                    temp = dec["value"]
-                    print(temp)
-                    newvar["value"] = (temp["value"])
-                declarations.append(newvar)
-
-    return declarations
-
-def set_variable(name, value, vars):
-    for var in vars:
-        if var["name"] == name:
-            var["value"] = value
-            vartype = type(value).__name__
-            match vartype:
-                case "bool":
-                    var["valueType"] = "TROOF"
-                case "int":
-                    var["valueType"] = "NUMBR"
-                case "float":
-                    var["valueType"] = "NUMBAR"
-                case "str":
-                    var["valueType"] = "YARN"
-                case _:
-                    raise SyntaxError("Cannot find data type.")
-            return vars
-    raise ValueError(f"Variable {name} does not exist")
+def initialize_var(dec):
+    #print(json.dumps(dec, indent=2))
+    #print(dec["name"])
+    symbol_table[dec["name"]] = None
+    if ("value" in dec.keys() or "BinaryOperation" in dec.keys()) and dec["value"] is not None:
+        temp = dec["value"]
+        if temp["type"] == "Literal":
+            if temp["value"] in ["WIN", "FAIL"]:
+                symbol_table[dec["name"]] = typecast_to_troof(temp["value"])
+            elif type(temp["value"]).__name__ == "int":
+                symbol_table[dec["name"]] = typecast_to_numbr(temp["value"])
+            elif type(temp["value"]).__name__ == "float":
+                symbol_table[dec["name"]] = typecast_to_numbar(temp["value"])
+        elif temp["type"] == "BinaryOperation":
+            #print(json.dumps(temp["left"], indent=2))
+            #print(json.dumps(temp["right"], indent=2))
+            result = evaluate_binary(temp["operator"], symbol_table, temp)
+            if temp["value"] in ["WIN", "FAIL"]:
+                symbol_table[dec["name"]] = typecast_to_troof(result)
+            elif type(result).__name__ == "int":
+                symbol_table[dec["name"]] = typecast_to_numbr(result)
+            elif type(result).__name__ == "float":
+                symbol_table[dec["name"]] = typecast_to_numbar(result)
+            
+            symbol_table[dec["name"]] == result
 
 def get_variable(name, vars):
     for var in vars:
@@ -79,7 +81,8 @@ def eval_expression(expr, vars):
             return expr["value"]
 
         case "Variable":
-            return get_variable(expr["name"], vars)
+            return symbol_table[expr["name"]]
+            #return get_variable(expr["name"], vars)
         
         case "Concatenation":
             x = ""
@@ -90,7 +93,7 @@ def eval_expression(expr, vars):
         
         case "UnaryOperation":
             if expr["operator"] == "NOT":
-                x = typecast_to_troof(get_variable(expr["operand"], vars))
+                x = typecast_to_troof(symbol_table[expr["operand"]])
                 return not x
 
         case "BinaryOperation":
@@ -99,29 +102,47 @@ def eval_expression(expr, vars):
         case "TypecastExpression":
             var = expr["variable"]
             varType = expr["targetType"]
-            value = get_variable(expr["variable"], vars)
+            value = symbol_table[expr["variable"]]
             match varType:
                 case "TROOF":
                     varValue = typecast_to_troof(value)
-                    set_variable(var, varValue, vars)
+                    #set_variable(var, varValue, vars)
+                    symbol_table[var] = varValue
                 case "NUMBR":
                     varValue = typecast_to_numbr(value)
-                    set_variable(var, varValue, vars)
+                    #set_variable(var, varValue, vars)
+                    symbol_table[var] = varValue
                 case "NUMBAR":
                     varValue = typecast_to_numbar(value)
-                    set_variable(var, varValue, vars)
+                    #set_variable(var, varValue, vars)
+                    symbol_table[var] = varValue
                 case "YARN":
                     varValue = typecast_to_yarn(value)
-                    set_variable(var, varValue, vars)
+                    #set_variable(var, varValue, vars)
+                    symbol_table[var] = varValue
             return varValue
+        
+        case None:
+            return None
 
         case _:
             raise Exception(f"Unknown expression type {expr}.")
         
 def evaluate_binary(operator, vars, expr):
-    left = eval_expression(expr["left"], vars)
-    right = eval_expression(expr["right"], vars)
-    print(left, right)
+    if expr["left"]["type"] == "Literal":
+        left = eval_expression(expr["left"], vars)
+    elif expr["left"]["type"] == "Variable":
+        left = symbol_table[expr["left"]["name"]]
+    elif expr["left"]["type"] == "BinaryOperation":
+        left = evaluate_binary(expr["operator"], vars, expr["left"])
+
+    if expr["right"]["type"] == "Literal":
+        right = eval_expression(expr["right"], vars)
+    elif expr["right"]["type"] == "Variable":
+        right = symbol_table[expr["right"]["name"]]
+    elif expr["right"]["type"] == "BinaryOperation":
+        right = evaluate_binary(expr["operator"], vars, expr["right"])
+
     datatype = find_highest_datattype(left, right)
     match operator:
         case "SUM":
@@ -250,7 +271,11 @@ def typecast_to_troof(operand):
             raise ValueError(f"Unexpected data type {operand} when typecasting to bool.")
         
 def typecast_to_numbr(operand):
+    operand = re.sub('"', "", operand )
     operandtype = type(operand).__name__
+    if operand == "FAIL" or operand == "WIN":
+        operandtype = "bool"
+    print(operand)
     match operandtype:
         case None:
             raise ValueError(f"{operand} cannot be typecasted to int.")
@@ -325,3 +350,11 @@ def typecast_to_yarn(operand):
 
         case _:
             raise SyntaxError(f"Unexpected data type {operand} when typecasting to string.")
+        
+# def check_type(value):
+#     try:
+#         bool(value)
+#         return bool
+#     except ValueError:
+        
+    
