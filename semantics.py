@@ -60,6 +60,7 @@ def set_variable(name, value, vars):
                     var["valueType"] = "YARN"
                 case _:
                     raise SyntaxError("Cannot find data type.")
+            print(var["name"], var["value"])
             return vars
     raise ValueError(f"Variable {name} does not exist")
 
@@ -113,6 +114,7 @@ def eval_expression(expr, vars):
 def evaluate_binary(operator, vars, expr):
     left = eval_expression(expr["left"], vars)
     right = eval_expression(expr["right"], vars)
+    datatype = find_highest_datattype(left, right)
     match operator:
         case "SUM":
             return typecast_to_numbr(left) + typecast_to_numbr(right)
@@ -125,21 +127,92 @@ def evaluate_binary(operator, vars, expr):
         case "MOD":
             return typecast_to_numbr(left) % typecast_to_numbr(right)
         case "BIGGR":
-            return typecast_to_numbr(left) > typecast_to_numbr(right)
+            match datatype:
+                case "bool":
+                    return max(typecast_to_troof(left), typecast_to_troof(right))
+                case "int":
+                    return max(typecast_to_numbr(left), typecast_to_numbr(right))
+                case "float":
+                    return max(typecast_to_numbr(left), typecast_to_numbr(right))
+                case "str":
+                    return max(typecast_to_numbr(left), typecast_to_numbr(right))
         case "SMALLR":
-            return typecast_to_numbr(left) < typecast_to_numbr(right)
+            match datatype:
+                case "bool":
+                    return min(typecast_to_troof(left), typecast_to_troof(right))
+                case "int":
+                    return min(typecast_to_numbr(left), typecast_to_numbr(right))
+                case "float":
+                    return min(typecast_to_numbr(left), typecast_to_numbr(right))
+                case "str":
+                    return min(typecast_to_numbr(left), typecast_to_numbr(right))
         case "BOTH SAEM":
-            return typecast_to_troof(left) == typecast_to_troof(right)
+            match datatype:
+                case "bool":
+                    return typecast_to_troof(left) == typecast_to_troof(right)
+                case "int":
+                    return typecast_to_numbr(left) == typecast_to_numbr(right)
+                case "float":
+                    return typecast_to_numbar(left) == typecast_to_numbar(right)
+                case "str":
+                    return typecast_to_yarn(left) == typecast_to_yarn(right)
         case "DIFFRINT":
-            return typecast_to_troof(left) != typecast_to_troof(right)
+            match datatype:
+                case "bool":
+                    return typecast_to_troof(left) != typecast_to_troof(right)
+                case "int":
+                    return typecast_to_numbr(left) != typecast_to_numbr(right)
+                case "float":
+                    return typecast_to_numbar(left) != typecast_to_numbar(right)
+                case "str":
+                    return typecast_to_yarn(left) != typecast_to_yarn(right)
         case "BOTH":
-            return typecast_to_troof(left) and typecast_to_troof(right)
+            match datatype:
+                case "bool":
+                    return typecast_to_troof(left) and typecast_to_troof(right)
+                case "int":
+                    return typecast_to_numbr(left) and typecast_to_numbr(right)
+                case "float":
+                    return typecast_to_numbar(left) and typecast_to_numbar(right)
+                case "str":
+                    return typecast_to_yarn(left) and typecast_to_yarn(right)
         case "EITHER":
-            return typecast_to_troof(left) or typecast_to_troof(right)
+            match datatype:
+                case "bool":
+                    return typecast_to_troof(left) or typecast_to_troof(right)
+                case "int":
+                    return typecast_to_numbr(left) or typecast_to_numbr(right)
+                case "float":
+                    return typecast_to_numbar(left) or typecast_to_numbar(right)
+                case "str":
+                    return typecast_to_yarn(left) or typecast_to_yarn(right)
         case "WON":
-            return (not typecast_to_troof(left) and typecast_to_troof(right)) or (typecast_to_troof(left) and not typecast_to_troof(right))
+            match datatype:
+                case "bool":
+                    return (not typecast_to_troof(left) and typecast_to_troof(right)) or (typecast_to_troof(left) and not typecast_to_troof(right))
+                case "int":
+                    return (not typecast_to_numbr(left) and typecast_to_numbr(right)) or (typecast_to_numbr(left) and not typecast_to_numbr(right))
+                case "float":
+                    return (not typecast_to_numbar(left) and typecast_to_numbar(right)) or (typecast_to_numbar(left) and not typecast_to_numbar(right))
+                case "str":
+                    return (not typecast_to_yarn(left) and typecast_to_yarn(right)) or (typecast_to_yarn(left) and not typecast_to_yarn(right))
+        case "CONCATENATE":
+            return typecast_to_yarn(left) + typecast_to_yarn(right)
         case _:
-            raise SyntaxError(f"Unexpected binary operation.")
+            raise SyntaxError(f"Unexpected binary operation {operator}.")
+        
+def find_highest_datattype(operand1, operand2):
+    operand1 = type(operand1).__name__
+    operand2 = type(operand2).__name__
+    if operand1 == "str" or operand2 == "str":
+        return "str"
+    elif operand1 == "float" or operand2 == "float":
+        return "float"
+    elif operand1 == "int" or operand2 == "int":
+        return "int"
+    elif operand1 == "bool" or operand2 == "bool":
+        return "bool"
+    return None
         
 def typecast_to_troof(operand):
     operandtype = type(operand).__name__
@@ -166,7 +239,7 @@ def typecast_to_troof(operand):
             return True
 
         case _:
-            raise ValueError(f"Expected data type when typecasting to bool.")
+            raise ValueError(f"Unexpected data type {operand} when typecasting to bool.")
         
 def typecast_to_numbr(operand):
     operandtype = type(operand).__name__
@@ -193,7 +266,7 @@ def typecast_to_numbr(operand):
                 print("Cannot typecast int to string.")
 
         case _:
-            raise ValueError(f"Expected data type when typecasting to int.")
+            raise ValueError(f"Unexpected data type {operand} when typecasting to int.")
         
 def typecast_to_numbar(operand):
     operandtype = type(operand).__name__
@@ -220,7 +293,7 @@ def typecast_to_numbar(operand):
                 print("Cannot typecast int to string.")
 
         case _:
-            raise ValueError(f"Expected data type when typecasting to float.")
+            raise ValueError(f"Unexpected data type {operand} when typecasting to float.")
         
 def typecast_to_yarn(operand):
     operandtype = type(operand).__name__
@@ -243,4 +316,4 @@ def typecast_to_yarn(operand):
             return operand
 
         case _:
-            raise SyntaxError(f"Expected data type when typecasting to string.")
+            raise SyntaxError(f"Unexpected data type {operand} when typecasting to string.")
