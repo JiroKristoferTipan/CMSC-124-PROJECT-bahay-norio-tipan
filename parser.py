@@ -1,5 +1,13 @@
 import json
 
+def get_line_number(tokens, index):
+    # Calculate line number for a given token index
+    line = 1
+    for i in range(min(index, len(tokens))):
+        if tokens[i][1] == "Newline":
+            line += 1
+    return line
+
 def parse_program(tokens):
     current = 0
 
@@ -13,7 +21,8 @@ def parse_program(tokens):
             current += 1  # skip newline
 
     if current >= len(tokens) or tokens[current][1] != "Code Start":
-        raise SyntaxError("Program must start with HAI")
+        line = get_line_number(tokens, current)
+        raise SyntaxError(f"Program must start with HAI (line {line})")
 
     current += 1  # skip HAI
 
@@ -24,14 +33,13 @@ def parse_program(tokens):
     statements, current = parse_statement_list(tokens, current)
 
     if current >= len(tokens) or tokens[current][1] != "Code End":
-        raise SyntaxError("Program must end with KTHXBYE")
+        line = get_line_number(tokens, current)
+        raise SyntaxError(f"Program must end with KTHXBYE (line {line})")
 
     ast = {
         "type": "Program",
         "body": statements
     }
-
-    print("Parsing Successful.")
     
     return ast
 
@@ -47,7 +55,8 @@ def parse_statement_list(tokens, current):
 
 def parse_statement(tokens, current):
     if current >= len(tokens):
-        raise SyntaxError(f"Unexpected end of tokens")
+        line = get_line_number(tokens, current - 1)
+        raise SyntaxError(f"Unexpected end of tokens (line {line})")
     
     token_type = tokens[current][1]
 
@@ -108,8 +117,6 @@ def parse_statement(tokens, current):
 
         # Variable Assignment
         case "Variable":
-            if tokens[current-1][1] == tokens[current][1]:
-                    raise SystemError(f"Expected delimiter after '{tokens[current-1][1].lower()}' at token {current}")
             if current + 1 < len(tokens):
                 next_token = tokens[current + 1][1]
                 if next_token == "Variable Assignment":
@@ -154,27 +161,30 @@ def parse_statement(tokens, current):
             return None, current + 1
 
         case _:
-            raise SyntaxError(f"Unexpected token '{tokens[current][0]}' ('{tokens[current][1]}') at position {current}")
+            line = get_line_number(tokens, current)
+            raise SyntaxError(f"Unexpected token '{tokens[current][0]}' ('{tokens[current][1]}') at line {line}")
 
 
 def parse_typecast(tokens, current):
     if current >= len(tokens) or tokens[current][1] != "Typecasting Start Operation":
-        raise SyntaxError(f"Expected 'MAEK' at token {current}")
+        line = get_line_number(tokens, current)
+        raise SyntaxError(f"Expected 'MAEK' at line {line}")
     current += 1
 
     # MAEK A <var> <type>
     if current < len(tokens) and tokens[current][1] == "Typecasting Value Operation":
         current += 1  # skip A
         if current >= len(tokens) or tokens[current][1] != "Variable":
-            raise SyntaxError(f"Expected variable after 'MAEK A' at token {current}")
+            line = get_line_number(tokens, current)
+            raise SyntaxError(f"Expected variable after 'MAEK A' at line {line}")
         var_name = tokens[current][0]
         current += 1
         if current >= len(tokens) or tokens[current][1] != "Type Literal":
-            raise SyntaxError(f"Expected type literal at token {current}")
+            line = get_line_number(tokens, current)
+            raise SyntaxError(f"Expected type literal at line {line}")
         type_name = tokens[current][0]
         current += 1
-        
-        print("Parsed <typecast> successfully.")
+
         return {
             "type": "TypecastExpression",
             "variable": var_name,
@@ -183,20 +193,22 @@ def parse_typecast(tokens, current):
     # MAEK <var> A <type>
     else:
         if current >= len(tokens) or tokens[current][1] != "Variable":
-            raise SyntaxError(f"Expected variable after 'MAEK' at token {current}")
+            line = get_line_number(tokens, current)
+            raise SyntaxError(f"Expected variable after 'MAEK' at line {line}")
         var_name = tokens[current][0]
         current += 1
 
         if current >= len(tokens) or tokens[current][1] != "Typecasting Value Operation":
-            raise SyntaxError(f"Expected 'A' after variable in typecast at token {current}")
+            line = get_line_number(tokens, current)
+            raise SyntaxError(f"Expected 'A' after variable in typecast at line {line}")
         current += 1
 
         if current >= len(tokens) or tokens[current][1] != "Type Literal":
-            raise SyntaxError(f"Expected type literal after 'A' at token {current}")
+            line = get_line_number(tokens, current)
+            raise SyntaxError(f"Expected type literal after 'A' at line {line}")
         type_name = tokens[current][0]
         current += 1
 
-        print("Parsed <typecast> successfully.")
         return {
             "type": "TypecastExpression",
             "variable": var_name,
@@ -208,7 +220,8 @@ def parse_varDeclaration(tokens, current):
     current += 1  # skip 'I HAS A'
 
     if current >= len(tokens) or tokens[current][1] != "Variable":
-        raise SyntaxError(f"Expected variable name after 'I HAS A' at token {current}")
+        line = get_line_number(tokens, current)
+        raise SyntaxError(f"Expected variable name after 'I HAS A' at line {line}")
     var_name = tokens[current][0]
     current += 1
 
@@ -218,7 +231,6 @@ def parse_varDeclaration(tokens, current):
         current += 1  # skip ITZ
         init_value, current = parse_expression(tokens, current)
 
-    print(f"Declared variable '{var_name}' successfully.")
     return {
         "type": "VariableDeclaration",
         "name": var_name,
@@ -233,19 +245,30 @@ def parse_varInitSection(tokens, current):
     while current < len(tokens) and tokens[current][1] == "Newline":
         current += 1
 
-    # Parse statements inside section
+    # Parse statements inside section (only variable declarations allowed)
     statements = []
     while current < len(tokens) and tokens[current][1] != "End something":
+        # Check if we hit the end of program without BUHBYE
+        if tokens[current][1] == "Code End":
+            line = get_line_number(tokens, current)
+            raise SyntaxError(f"Expected 'BUHBYE' to close variable initialization section before 'KTHXBYE' at line {line}")
+        
+        # Only allow variable declarations and comments in this section
+        if tokens[current][1] not in ["Variable Declaration", "Single Comment Line", "Multi Comment Start", "Newline"]:
+            line = get_line_number(tokens, current)
+            raise SyntaxError(f"Only variable declarations allowed in WAZZUP section. Found '{tokens[current][0]}' at line {line}")
+        
         stmt, current = parse_statement(tokens, current)
         if stmt:
             statements.append(stmt)
 
     # Expect BUHBYE
     if current >= len(tokens) or tokens[current][1] != "End something":
-        raise SyntaxError(f"Expected 'BUHBYE' to close varinitsection at token {current}")
+        line = get_line_number(tokens, current)
+        raise SyntaxError(f"Expected 'BUHBYE' to close varinitsection at line {line}")
 
     current += 1  # skip BUHBYE
-    print("Parsed <varinitsection> successfully.")
+
     return {
         "type": "VariableInitSection",
         "declarations": statements
@@ -267,7 +290,6 @@ def parse_output(tokens, current):
         expr, current = parse_expression(tokens, current)
         expressions.append(expr)
 
-    print("Parsed VISIBLE output successfully.")
     return {
         "type": "Output",
         "expressions": expressions
@@ -276,9 +298,14 @@ def parse_output(tokens, current):
 
 def parse_expression(tokens, current):
     if current >= len(tokens):
-        raise SyntaxError(f"Unexpected end of tokens in expression")
+        line = get_line_number(tokens, current - 1)
+        raise SyntaxError(f"Unexpected end of tokens in expression (line {line})")
 
     token_type = tokens[current][1]
+    
+    if tokens[current-1][1] == tokens[current][1]:
+        line = get_line_number(tokens, current)
+        raise SyntaxError(f"Expected a delimeter after a {tokens[current-1][1].lower()} at line {line}")
 
     # Literal or variable
     if token_type in ["YARN", "NUMBR", "NUMBAR", "TROOF"]:
@@ -295,7 +322,8 @@ def parse_expression(tokens, current):
         while current < len(tokens) and tokens[current][1] == "Concatenation Operator":
             current += 1  # skip +
             if current >= len(tokens):
-                raise SyntaxError(f"Expected expression after '+' at token {current}")
+                line = get_line_number(tokens, current - 1)
+                raise SyntaxError(f"Expected expression after '+' at line {line}")
             right, current = parse_expression(tokens, current)
             node = {
                 "type": "BinaryOperation",
@@ -316,7 +344,8 @@ def parse_expression(tokens, current):
         while current < len(tokens) and tokens[current][1] == "Concatenation Operator":
             current += 1  # skip +
             if current >= len(tokens):
-                raise SyntaxError(f"Expected expression after '+' at token {current}")
+                line = get_line_number(tokens, current - 1)
+                raise SyntaxError(f"Expected expression after '+' at line {line}")
             right, current = parse_expression(tokens, current)
             node = {
                 "type": "BinaryOperation",
@@ -354,7 +383,8 @@ def parse_expression(tokens, current):
         left, current = parse_expression(tokens, current)
 
         if current >= len(tokens) or tokens[current][1] != "Parameter Delimiter":
-            raise SyntaxError(f"Expected 'AN' in binary operation at token {current}")
+            line = get_line_number(tokens, current)
+            raise SyntaxError(f"Expected 'AN' in binary operation at line {line}")
         current += 1
 
         right, current = parse_expression(tokens, current)
@@ -386,7 +416,8 @@ def parse_expression(tokens, current):
         operands.append(expr)
         
         if current >= len(tokens) or tokens[current][1] != "Parameter Delimiter":
-            raise SyntaxError(f"Expected 'AN' after first operand in multi-operation at token {current}")
+            line = get_line_number(tokens, current)
+            raise SyntaxError(f"Expected 'AN' after first operand in multi-operation at line {line}")
         current += 1
         
         expr, current = parse_expression(tokens, current)
@@ -419,12 +450,14 @@ def parse_expression(tokens, current):
         return parse_call_function(tokens, current)
 
     else:
-        raise SyntaxError(f"Unexpected expression token '{tokens[current][0]}' ('{token_type}') at position {current}")
+        line = get_line_number(tokens, current)
+        raise SyntaxError(f"Unexpected expression token '{tokens[current][0]}' ('{token_type}') at line {line}")
 
 
 def parse_concatenate(tokens, current):
     if current >= len(tokens) or tokens[current][1] != "String Concatenation":
-        raise SyntaxError(f"Expected 'SMOOSH' at token {current}")
+        line = get_line_number(tokens, current)
+        raise SyntaxError(f"Expected 'SMOOSH' at line {line}")
     current += 1
 
     expressions = []
@@ -436,7 +469,7 @@ def parse_concatenate(tokens, current):
         expr, current = parse_expression(tokens, current)
         expressions.append(expr)
 
-    print("Parsed SMOOSH concatenation successfully.")
+
     return {
         "type": "Concatenation",
         "expressions": expressions
@@ -445,15 +478,16 @@ def parse_concatenate(tokens, current):
 
 def parse_input(tokens, current):
     if current >= len(tokens) or tokens[current][1] != "Input Keyword":
-        raise SyntaxError(f"Expected 'GIMMEH' at token {current}")
+        line = get_line_number(tokens, current)
+        raise SyntaxError(f"Expected 'GIMMEH' at line {line}")
     current += 1
 
     if current >= len(tokens) or tokens[current][1] != "Variable":
-        raise SyntaxError(f"Expected variable after 'GIMMEH' at token {current}")
+        line = get_line_number(tokens, current)
+        raise SyntaxError(f"Expected variable after 'GIMMEH' at line {line}")
     var_name = tokens[current][0]
     current += 1
 
-    print("Parsed <userinput> successfully.")
     return {
         "type": "Input",
         "variable": var_name
@@ -462,7 +496,8 @@ def parse_input(tokens, current):
 
 def parse_single_comment(tokens, current):
     if current >= len(tokens) or tokens[current][1] != "Single Comment Line":
-        raise SyntaxError(f"Expected 'BTW' at token {current}")
+        line = get_line_number(tokens, current)
+        raise SyntaxError(f"Expected 'BTW' at line {line}")
     current += 1
 
     # Skip until newline
@@ -472,29 +507,32 @@ def parse_single_comment(tokens, current):
     if current < len(tokens) and tokens[current][1] == "Newline":
         current += 1
 
-    print("Parsed <singlecomment> successfully.")
     return None, current  # Comments don't appear in AST
 
 
 def parse_multi_comment(tokens, current):
     if current >= len(tokens) or tokens[current][1] != "Multi Comment Start":
-        raise SyntaxError(f"Expected 'OBTW' at token {current}")
+        line = get_line_number(tokens, current)
+        raise SyntaxError(f"Expected 'OBTW' at line {line}")
     current += 1
 
     while current < len(tokens) and tokens[current][1] != "Multi Comment End":
         current += 1
 
     if current >= len(tokens) or tokens[current][1] != "Multi Comment End":
-        raise SyntaxError(f"Expected 'TLDR' to close multi-line comment at token {current}")
+        line = get_line_number(tokens, current)
+        raise SyntaxError(f"Expected 'TLDR' to close multi-line comment at line {line}")
 
     current += 1
-    print("Parsed <multicomment> successfully.")
     return None, current  # Comments don't appear in AST
 
 
 def parse_if_structure(tokens, current):
     if current >= len(tokens) or tokens[current][1] != "If Else Start":
-        raise SyntaxError(f"Expected 'O RLY?' at token {current}")
+        line = get_line_number(tokens, current)
+        raise SyntaxError(f"Expected 'O RLY?' at line {line}")
+    
+    if_start_line = get_line_number(tokens, current)
     current += 1
 
     # Skip newlines
@@ -502,7 +540,8 @@ def parse_if_structure(tokens, current):
         current += 1
 
     if current >= len(tokens) or tokens[current][1] != "If Keyword":
-        raise SyntaxError(f"Expected 'YA RLY' after 'O RLY?' at token {current}")
+        line = get_line_number(tokens, current)
+        raise SyntaxError(f"Expected 'YA RLY' after 'O RLY?' at line {line}")
     current += 1
 
     then_branch, current = parse_codeblock(tokens, current)
@@ -524,11 +563,22 @@ def parse_if_structure(tokens, current):
         current += 1
         else_branch, current = parse_codeblock(tokens, current)
 
-    if current >= len(tokens) or tokens[current][1] != "If Else End":
-        raise SyntaxError(f"Expected 'OIC' to end if-structure at token {current}")
+    if current >= len(tokens):
+        raise SyntaxError(f"Expected 'OIC' to end if-structure started at line {if_start_line}, but reached end of file")
+    
+    if tokens[current][1] != "If Else End":
+        line = get_line_number(tokens, current)
+        # Check for common problematic tokens
+        if tokens[current][1] == "If Else Start":
+            raise SyntaxError(f"Expected 'OIC' to end if-structure started at line {if_start_line}, but found another 'O RLY?' at line {line}")
+        elif tokens[current][1] == "Function Start":
+            raise SyntaxError(f"Expected 'OIC' to end if-structure started at line {if_start_line}, but found function definition at line {line}")
+        elif tokens[current][1] == "Code End":
+            raise SyntaxError(f"Expected 'OIC' to end if-structure started at line {if_start_line}, but found 'KTHXBYE' at line {line}")
+        else:
+            raise SyntaxError(f"Expected 'OIC' to end if-structure started at line {if_start_line}, found '{tokens[current][0]}' at line {line}")
+    
     current += 1
-
-    print("Parsed <ifstructure> successfully.")
     return {
         "type": "IfStatement",
         "thenBranch": then_branch,
@@ -536,10 +586,12 @@ def parse_if_structure(tokens, current):
         "elseBranch": else_branch
     }, current
 
-
 def parse_switch(tokens, current):
     if current >= len(tokens) or tokens[current][1] != "switch":
-        raise SyntaxError(f"Expected 'WTF?' at token {current}")
+        line = get_line_number(tokens, current)
+        raise SyntaxError(f"Expected 'WTF?' at line {line}")
+    
+    switch_start_line = get_line_number(tokens, current)
     current += 1
 
     # Skip newlines
@@ -561,8 +613,23 @@ def parse_switch(tokens, current):
         current += 1
         default_case, current = parse_codeblock(tokens, current)
 
-    if current >= len(tokens) or tokens[current][1] != "If Else End":
-        raise SyntaxError(f"Expected 'OIC' to end switch structure at token {current}")
+    if current >= len(tokens):
+        raise SyntaxError(f"Expected 'OIC' to end switch structure started at line {switch_start_line}, but reached end of file")
+    
+    if tokens[current][1] != "If Else End":
+        line = get_line_number(tokens, current)
+        # Check for common problematic tokens
+        if tokens[current][1] == "switch":
+            raise SyntaxError(f"Expected 'OIC' to end switch structure started at line {switch_start_line}, but found another 'WTF?' at line {line}")
+        elif tokens[current][1] == "If Else Start":
+            raise SyntaxError(f"Expected 'OIC' to end switch structure started at line {switch_start_line}, but found 'O RLY?' at line {line}")
+        elif tokens[current][1] == "Function Start":
+            raise SyntaxError(f"Expected 'OIC' to end switch structure started at line {switch_start_line}, but found function definition at line {line}")
+        elif tokens[current][1] == "Code End":
+            raise SyntaxError(f"Expected 'OIC' to end switch structure started at line {switch_start_line}, but found 'KTHXBYE' at line {line}")
+        else:
+            raise SyntaxError(f"Expected 'OIC' to end switch structure started at line {switch_start_line}, found '{tokens[current][0]}' at line {line}")
+    
     current += 1
 
     print("Parsed <switchstructure> successfully.")
@@ -593,11 +660,15 @@ def parse_codeblock(tokens, current):
 
 def parse_loop(tokens, current):
     if current >= len(tokens) or tokens[current][1] != "Loop Start Keyword":
-        raise SyntaxError(f"Expected 'IM IN YR' at token {current}")
+        line = get_line_number(tokens, current)
+        raise SyntaxError(f"Expected 'IM IN YR' at line {line}")
+    
+    loop_start_line = get_line_number(tokens, current)
     current += 1
 
     if current >= len(tokens) or tokens[current][1] != "Variable":
-        raise SyntaxError(f"Expected loop label after 'IM IN YR' at token {current}")
+        line = get_line_number(tokens, current)
+        raise SyntaxError(f"Expected loop label after 'IM IN YR' at line {line}")
     loop_label = tokens[current][0]
     current += 1
 
@@ -610,11 +681,13 @@ def parse_loop(tokens, current):
         current += 1
 
         if current >= len(tokens) or tokens[current][1] != "Loop Variable Assignment":
-            raise SyntaxError(f"Expected 'YR' after operation at token {current}")
+            line = get_line_number(tokens, current)
+            raise SyntaxError(f"Expected 'YR' after operation at line {line}")
         current += 1
 
         if current >= len(tokens) or tokens[current][1] != "Variable":
-            raise SyntaxError(f"Expected variable after 'YR' at token {current}")
+            line = get_line_number(tokens, current)
+            raise SyntaxError(f"Expected variable after 'YR' at line {line}")
         loop_var = tokens[current][0]
         current += 1
 
@@ -629,12 +702,39 @@ def parse_loop(tokens, current):
 
     body, current = parse_codeblock(tokens, current)
 
-    if current >= len(tokens) or tokens[current][1] != "Loop End Keyword":
-        raise SyntaxError(f"Expected 'IM OUTTA YR' to end loop at token {current}")
+    if current >= len(tokens):
+        raise SyntaxError(f"Expected 'IM OUTTA YR {loop_label}' to end loop started at line {loop_start_line}, but reached end of file")
+    
+    if tokens[current][1] != "Loop End Keyword":
+        line = get_line_number(tokens, current)
+        # Check for common problematic tokens
+        if tokens[current][1] == "Loop Start Keyword":
+            raise SyntaxError(f"Expected 'IM OUTTA YR {loop_label}' to end loop started at line {loop_start_line}, but found another loop at line {line}")
+        elif tokens[current][1] == "If Else Start":
+            raise SyntaxError(f"Expected 'IM OUTTA YR {loop_label}' to end loop started at line {loop_start_line}, but found 'O RLY?' at line {line}")
+        elif tokens[current][1] == "switch":
+            raise SyntaxError(f"Expected 'IM OUTTA YR {loop_label}' to end loop started at line {loop_start_line}, but found 'WTF?' at line {line}")
+        elif tokens[current][1] == "Function Start":
+            raise SyntaxError(f"Expected 'IM OUTTA YR {loop_label}' to end loop started at line {loop_start_line}, but found function definition at line {line}")
+        elif tokens[current][1] == "Code End":
+            raise SyntaxError(f"Expected 'IM OUTTA YR {loop_label}' to end loop started at line {loop_start_line}, but found 'KTHXBYE' at line {line}")
+        else:
+            raise SyntaxError(f"Expected 'IM OUTTA YR {loop_label}' to end loop started at line {loop_start_line}, found '{tokens[current][0]}' at line {line}")
+    
     current += 1
 
-    if current >= len(tokens) or tokens[current][1] != "Variable":
-        raise SyntaxError(f"Expected loop label after 'IM OUTTA YR' at token {current}")
+    if current >= len(tokens):
+        raise SyntaxError(f"Expected loop label '{loop_label}' after 'IM OUTTA YR' at line {get_line_number(tokens, current - 1)}, but reached end of file")
+    
+    if tokens[current][1] != "Variable":
+        line = get_line_number(tokens, current)
+        raise SyntaxError(f"Expected loop label '{loop_label}' after 'IM OUTTA YR' at line {line}")
+    
+    closing_label = tokens[current][0]
+    if closing_label != loop_label:
+        line = get_line_number(tokens, current)
+        raise SyntaxError(f"Loop label mismatch: loop started with '{loop_label}' at line {loop_start_line} but closed with '{closing_label}' at line {line}")
+    
     current += 1
 
     print(f"Parsed loop '{loop_label}' successfully.")
@@ -650,11 +750,15 @@ def parse_loop(tokens, current):
 
 def parse_function_definition(tokens, current):
     if current >= len(tokens) or tokens[current][1] != "Function Start":
-        raise SyntaxError(f"Expected 'HOW IZ I' at token {current}")
+        line = get_line_number(tokens, current)
+        raise SyntaxError(f"Expected 'HOW IZ I' at line {line}")
+    
+    func_start_line = get_line_number(tokens, current)
     current += 1
 
     if current >= len(tokens) or tokens[current][1] != "Variable":
-        raise SyntaxError(f"Expected function name after 'HOW IZ I' at token {current}")
+        line = get_line_number(tokens, current)
+        raise SyntaxError(f"Expected function name after 'HOW IZ I' at line {line}")
     func_name = tokens[current][0]
     current += 1
 
@@ -663,7 +767,8 @@ def parse_function_definition(tokens, current):
         current += 1
 
         if current >= len(tokens) or tokens[current][1] != "Variable":
-            raise SyntaxError(f"Expected parameter name after 'YR' at token {current}")
+            line = get_line_number(tokens, current)
+            raise SyntaxError(f"Expected parameter name after 'YR' at line {line}")
         parameters.append(tokens[current][0])
         current += 1
 
@@ -671,21 +776,31 @@ def parse_function_definition(tokens, current):
             current += 1
             
             if current >= len(tokens) or tokens[current][1] != "Loop Variable Assignment":
-                raise SyntaxError(f"Expected 'YR' in parameter list at token {current}")
+                line = get_line_number(tokens, current)
+                raise SyntaxError(f"Expected 'YR' in parameter list at line {line}")
             current += 1
 
             if current >= len(tokens) or tokens[current][1] != "Variable":
-                raise SyntaxError(f"Expected parameter name at token {current}")
+                line = get_line_number(tokens, current)
+                raise SyntaxError(f"Expected parameter name at line {line}")
             parameters.append(tokens[current][0])
             current += 1
 
     body, current = parse_codeblock(tokens, current)
 
-    if current >= len(tokens) or tokens[current][1] != "Function End":
-        raise SyntaxError(f"Expected 'IF U SAY SO' to end function at token {current}")
+    if current >= len(tokens):
+        raise SyntaxError(f"Expected 'IF U SAY SO' to end function '{func_name}' started at line {func_start_line}, but reached end of file")
+    
+    if tokens[current][1] != "Function End":
+        line = get_line_number(tokens, current)
+        # Check if encountered another function start or other problematic tokens
+        if tokens[current][1] == "Function Start":
+            raise SyntaxError(f"Expected 'IF U SAY SO' to end function '{func_name}' started at line {func_start_line}, but found another function definition at line {line}")
+        else:
+            raise SyntaxError(f"Expected 'IF U SAY SO' to end function '{func_name}' started at line {func_start_line}, found '{tokens[current][0]}' at line {line}")
+    
     current += 1
 
-    print(f"Parsed function '{func_name}' successfully.")
     return {
         "type": "FunctionDefinition",
         "name": func_name,
@@ -696,7 +811,8 @@ def parse_function_definition(tokens, current):
 
 def parse_return_value(tokens, current):
     if current >= len(tokens):
-        raise SyntaxError(f"Unexpected end of tokens in return statement")
+        line = get_line_number(tokens, current - 1)
+        raise SyntaxError(f"Unexpected end of tokens in return statement (line {line})")
     
     return_keyword = tokens[current][0]
     current += 1
@@ -705,7 +821,6 @@ def parse_return_value(tokens, current):
     if return_keyword == "FOUND YR":
         return_value, current = parse_expression(tokens, current)
 
-    print("Parsed <return> successfully.")
     return {
         "type": "Return",
         "value": return_value
@@ -714,11 +829,13 @@ def parse_return_value(tokens, current):
 
 def parse_call_function(tokens, current):
     if current >= len(tokens) or tokens[current][1] != "Function Call":
-        raise SyntaxError(f"Expected 'I IZ' at token {current}")
+        line = get_line_number(tokens, current)
+        raise SyntaxError(f"Expected 'I IZ' at line {line}")
     current += 1
 
     if current >= len(tokens) or tokens[current][1] != "Variable":
-        raise SyntaxError(f"Expected function name after 'I IZ' at token {current}")
+        line = get_line_number(tokens, current)
+        raise SyntaxError(f"Expected function name after 'I IZ' at line {line}")
     func_name = tokens[current][0]
     current += 1
 
@@ -740,7 +857,6 @@ def parse_call_function(tokens, current):
         if current < len(tokens) and tokens[current][1] == "Concatenation Delimiter":
             current += 1
 
-    print(f"Parsed function call '{func_name}' successfully.")
     return {
         "type": "FunctionCall",
         "name": func_name,
