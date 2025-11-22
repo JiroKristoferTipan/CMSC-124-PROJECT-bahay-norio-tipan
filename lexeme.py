@@ -146,7 +146,13 @@ def tokenize(input_code):
             if lexeme == "\n":
                 tokens.append(("\n", token_type))
             else:
-                tokens.append((lexeme, token_type))
+                try:
+                    tokens.append((int(lexeme), token_type))
+                except ValueError:
+                    try:
+                        tokens.append((float(lexeme), token_type))
+                    except ValueError:
+                        tokens.append((re.sub('"', "", lexeme), token_type))
         
         # Advance index
         index += len(lexeme)
