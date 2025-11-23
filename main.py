@@ -1,4 +1,5 @@
-import parser
+from parser import parse_program
+from semantic import executeProgram
 import lexeme
 import os
 import json
@@ -30,12 +31,15 @@ def main():
     #         # f.write("\n")
     #     fileCounter += 1
     
-    with open("project-testcases/01_variables.lol", "r") as file:
+    with open("project-testcases/05_bool.lol", "r") as file:
             content = file.read()
             #tokenizer_instance = lexeme.tokenizer(content)
             tokens = lexeme.tokenize(content)
-            print(f'\n--- FILE {fileCounter} ---')
-            print(tokens)
+            # print(f'\n--- FILE {fileCounter} ---')
+            ast = parse_program(tokens)
+            with open("output.txt", "w") as f:
+                f.write(json.dumps(ast, indent=2))
+            executeProgram(ast)
             # parser.parse_program(tokens)
             # f.write(f'--- FILE {fileCounter} ---\n')
             # print(f'{"Lexeme":20} -> Token Type')
