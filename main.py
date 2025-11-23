@@ -1,7 +1,9 @@
-import parser
+from parser import parse_program
+from semantic import executeProgram
 import lexeme
 import os
 import json
+# import gui
 
 # Main
 def main():
@@ -29,13 +31,16 @@ def main():
     #         # f.write("\n")
     #     fileCounter += 1
     
-    with open("project-testcases/10_functions.lol", "r") as file:
+    with open("project-testcases/05_bool.lol", "r") as file:
             content = file.read()
             #tokenizer_instance = lexeme.tokenizer(content)
             tokens = lexeme.tokenize(content)
-            print(f'\n--- FILE {fileCounter} ---')
-            # print(json.dumps(parser.parse_program(tokens), indent=2))
-            parser.parse_program(tokens)
+            # print(f'\n--- FILE {fileCounter} ---')
+            ast = parse_program(tokens)
+            with open("output.txt", "w") as f:
+                f.write(json.dumps(ast, indent=2))
+            executeProgram(ast)
+            # parser.parse_program(tokens)
             # f.write(f'--- FILE {fileCounter} ---\n')
             # print(f'{"Lexeme":20} -> Token Type')
             # f.write(f'{"Lexeme":20} -> Token Type\n')
@@ -49,3 +54,4 @@ def main():
             
 if __name__ == "__main__":
     main()
+    # gui

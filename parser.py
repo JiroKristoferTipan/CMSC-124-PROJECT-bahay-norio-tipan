@@ -1,4 +1,3 @@
-import json
 
 def get_line_number(tokens, index):
     # Calculate line number for a given token index
