@@ -12,6 +12,7 @@ HAI
 
 	VISIBLE "Choice: "
 	GIMMEH choice
+	choice IS NOW A NUMBR
 
 	BOTH SAEM choice AN 1
 	O RLY?

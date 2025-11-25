@@ -736,7 +736,6 @@ def parse_loop(tokens, current):
     
     current += 1
 
-    print(f"Parsed loop '{loop_label}' successfully.")
     return {
         "type": "Loop",
         "label": loop_label,
