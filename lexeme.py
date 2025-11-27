@@ -7,6 +7,7 @@ token_patterns = [
     (r'-?[0-9]+\.[0-9]+', 'NUMBAR'),
     (r'-?[0-9]+', 'NUMBR'),
     (r'(WIN|FAIL)', 'TROOF'),
+    (r'NOOB', 'NOOB'),
     
     # MULTI-WORD KEYWORDS (must come before single-word versions)
     (r'I HAS A\b', 'Variable Declaration'),
@@ -62,7 +63,7 @@ token_patterns = [
     (r'YR\b', 'Loop Variable Assignment'),
     (r'TIL\b', 'Loop Keyword'),
     (r'WILE\b', 'Loop Keyword'),
-    (r'GTFO\b', 'Return Keyword'),
+    (r'GTFO\b', 'Break Keyword'),
     (r'MKAY\b', 'Concatenation Delimiter'),
     
     # TYPE LITERALS

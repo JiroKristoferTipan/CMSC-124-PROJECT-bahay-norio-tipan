@@ -13,6 +13,10 @@ def executeProgram(ast):
 
     for elements in body:
         match elements["type"]:
+            case "Literal":
+                symbolTable["IT"] = elements["value"]
+            case "Variable":
+                symbolTable["IT"] = symbolTable[elements["name"]]
             case "VariableInitSection":
                 execute_variableInit(elements["declarations"])
             case "Input":
@@ -35,11 +39,23 @@ def executeProgram(ast):
                 execute_loop(elements)
             case "FunctionDefinition":
                 execute_functionDefinition(elements)
+            case "Break":
+                return False
+
+    # see symbols saved
+    #print("Final Symbol Table:", symbolTable)
+
+    return True
+
 
 
     
 def execute_statement(node):
     match node["type"]:
+        case "Literal":
+            symbolTable["IT"] = node["value"]
+        case "Variable":
+            symbolTable["IT"] = symbolTable[node["name"]]
         case "VariableInitSection":
             execute_variableInit(node["declarations"])
         case "Input":
@@ -55,7 +71,7 @@ def execute_statement(node):
         case "ExpressionStatement":
             execute_expressionStatement(node["expression"])
         case "IfStatement":
-            execute_ifStatement(node)
+            return execute_ifStatement(node)                # kinda looks ungly ngl
         case "Loop":
             execute_loop(node)
         case "FunctionDefinition":
@@ -64,9 +80,13 @@ def execute_statement(node):
             execute_functionCall(node)
         case "Return":
             raise ReturnException(resolve_value(node["value"]) if node["value"] else None)
+        case "Break":
+            return False
 
         case _:
             raise TypeError(f"Unknown statement type '{node['type']}'")
+        
+    return True
 
 
 def execute_variableInit(ast):
@@ -87,6 +107,9 @@ def execute_variableInit(ast):
                         symbolTable[elements["name"]] = symbolTable[var_name]
                     else:
                         symbolTable[elements["name"]] = resolve_value(val)
+        # should not declare same varname twice
+        else:
+            raise SyntaxError(f"Variable '{elements['name']}' already declared")
                 
 def execute_input(ast):
     if ast not in symbolTable:
@@ -207,6 +230,10 @@ def execute_binaryOperation(operation, left, right):
         case "QUOSHUNT":
             left_val = convertTroof(left_val)
             right_val = convertTroof(right_val)
+            # fix python division always converting to float
+            if left_val % right_val == 0:
+                return int(left_val / right_val)
+            # if dividing actually is a float return this
             return left_val / right_val
         case "MOD":
             left_val = convertTroof(left_val)
@@ -261,7 +288,7 @@ def execute_concatenation(list):
     for elements in list:
         if elements["type"] == "Variable":
             if elements["name"] not in symbolTable:
-                raise NameError(f"Variable '{elements["name"]}' is not defined")
+                raise NameError(f"Variable '{elements['name']}' is not defined")
             if symbolTable[elements["name"]] == "NOOB":
                 raise TypeError(f'can only concatenate str (not "int") to NOOB')
             message += str(symbolTable[elements["name"]])
@@ -277,8 +304,19 @@ def execute_assignment(elements):
         symbolTable[var_name] = execute_concatenation(val["expressions"])
     elif val["type"] == "Literal":
         symbolTable[var_name] = val["value"]
+    elif val["type"] == "Variable":
+        name = val["name"]
+        
+        if name not in symbolTable:
+            raise NameError(f"Variable '{name}' is not defined")
+
+        symbolTable[var_name] = symbolTable[name]
     elif val["type"] == "TypecastExpression":
         symbolTable[var_name] = execute_typecast(val)
+    elif val["type"] == "BinaryOperation":
+        symbolTable[var_name] = execute_binaryOperation(val["operator"], val["left"], val["right"])
+    else:
+        raise TypeError(f"Cannot assign value of type '{val['type']}' to variable '{var_name}'")
     
         
 def execute_typecast(elements):
@@ -435,8 +473,9 @@ def execute_ifStatement(node):
     # YA RLY
     if condition_result == "WIN":
         for stmt in node["thenBranch"]:
-            execute_statement(stmt)
-        return
+            if not execute_statement(stmt):
+                return False
+        return True
 
     # MEBBE
     for branch in node["elifBranches"]:
@@ -453,23 +492,34 @@ def execute_ifStatement(node):
 
         if branch_result == "WIN":
             for stmt in branch["body"]:
-                execute_statement(stmt)
-            return
+                if not execute_statement(stmt):
+                    return False
+            return True
 
     # NO WAI
     if node["elseBranch"] is not None:
         for stmt in node["elseBranch"]:
-            execute_statement(stmt)
+            if not execute_statement(stmt):
+                return False
+    return True
 
 def execute_switchStatement(cases):
     listCase = cases["cases"]
+    found = False
+
+    # search for case
     for case in listCase:
         if convertTroof(case["value"]["value"]) == convertTroof(symbolTable["IT"]):
-            executeProgram(case)
-            return
-        
+            # found value, run everything under it
+            found = True
+        if found:
+            if not executeProgram(case):
+                return
+
+    # default case
     for statement in cases["default"]:
-        execute_statement(statement)
+        if not execute_statement(statement):
+            return
         
 def execute_loop(node):
     label = node["label"]
@@ -477,13 +527,14 @@ def execute_loop(node):
     var_name = node["variable"]        # loop variable name
     condition_node = node["condition"] # WILE/TIL node
     body = node["body"]
+    stop = False
 
     # Ensure loop variable exists
     if var_name not in symbolTable:
         raise NameError(f"Variable '{var_name}' is not defined for loop")
 
     # Loop forever until condition fails
-    while True:
+    while not stop:
         # Evaluate loop condition
         cond_type = condition_node["type"]  # WILE or TIL
         cond_expr = condition_node["expression"]
@@ -505,8 +556,13 @@ def execute_loop(node):
             raise ValueError(f"Unknown loop condition '{cond_type}'")
 
         # loop body
+        # if not executeProgram(node):
+        #     stop = True
         for stmt in body:
-            execute_statement(stmt)
+            if not execute_statement(stmt):
+                # check for break
+                stop = True
+                break
 
         # Inc or dec
         if operation == "UPPIN":

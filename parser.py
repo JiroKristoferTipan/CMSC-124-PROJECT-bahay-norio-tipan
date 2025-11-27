@@ -39,6 +39,7 @@ def parse_program(tokens):
         "type": "Program",
         "body": statements
     }
+    print("Parsed successfully!")
     
     return ast
 
@@ -109,6 +110,9 @@ def parse_statement(tokens, current):
         
         case "Return Keyword":
             return parse_return_value(tokens, current)
+        
+        case "Break Keyword":
+            return parse_break(tokens, current)
         
         case "Function Call":
             expr, current = parse_call_function(tokens, current)
@@ -307,7 +311,7 @@ def parse_expression(tokens, current):
         raise SyntaxError(f"Expected a delimeter after a {tokens[current-1][1].lower()} at line {line}")
 
     # Literal or variable
-    if token_type in ["YARN", "NUMBR", "NUMBAR", "TROOF"]:
+    if token_type in ["YARN", "NUMBR", "NUMBAR", "TROOF", "NOOB"]:
         value = tokens[current][0]
         current += 1
         
@@ -821,6 +825,20 @@ def parse_return_value(tokens, current):
 
     return {
         "type": "Return",
+        "value": return_value
+    }, current
+
+def parse_break(tokens, current):
+    if current >= len(tokens):
+        line = get_line_number(tokens, current - 1)
+        raise SyntaxError(f"Unexpected end of tokens in return statement (line {line})")
+    
+    current += 1
+
+    return_value = None
+
+    return {
+        "type": "Break",
         "value": return_value
     }, current
 
