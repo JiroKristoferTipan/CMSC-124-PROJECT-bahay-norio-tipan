@@ -248,10 +248,19 @@ def submit_user_input():
 submit_btn = tk.Button(input_frame, text="Submit", font=("Consolas", 12), command=submit_user_input)
 submit_btn.pack(pady=10, padx=10, fill="x")
 
+# EXECUTE button - top-right, aligned with file frame
+execute_button = tk.Button(
+    root,
+    text="EXECUTE",
+    font=("Consolas", 14, "bold"),
+    bg="#4CAF50",
+    fg="white",
+    activebackground="#45a049",
+    command=execute_code
+)
+# Place it relative to the window so it stays at upper-right
+execute_button.place(relx=0.85, y=25, width=150, height=50)
 
-# Execute button
-execute_button = tk.Button(root, text="EXECUTE", font=("Consolas", 12, "bold"), command=execute_code)
-execute_button.pack(fill="x", padx=20)
 
 
 root.mainloop()
