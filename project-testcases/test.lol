@@ -2,7 +2,7 @@ HAI
     WAZZUP
         I HAS A hello
         I HAS A hi ITZ hello
-        I HAS A num ITZ 12.0
+        I HAS A num ITZ 12
         I HAS A num2 ITZ num
         I HAS A string ITZ "WIN"
         I HAS A null ITZ NOOB
@@ -17,11 +17,13 @@ HAI
     VISIBLE PRODUKT OF 4 AN SUM OF 2 AN 3
 
     BTW test arithmetic operations
-    BTW VISIBLE SUM OF 5 AN PRODUKT OF 3 AN 4 + num + num2
+    VISIBLE SUM OF 5 AN PRODUKT OF 3 AN 4 + num + num2
+    VISIBLE "good morning sillies"
     PRODUKT OF 2 AN SUM OF DIFF OF 5 AN 2 AN QUOSHUNT OF 16 AN 4
     VISIBLE IT
     BIGGR OF 12.25 AN SUM OF 5 AN 7.25
     VISIBLE IT
+    num R 12.0
 
     BTW test boolean operations
     VISIBLE BOTH OF WIN AN FAIL                 BTW fail
@@ -113,5 +115,27 @@ HAI
 
 	VISIBLE "***"
 
+    BTW test functions
+    HOW IZ I add5 YR x
+        FOUND YR SUM OF x AN 5
+    IF U SAY SO
+
+    VISIBLE num + " num before"
+    VISIBLE IT + " IT before"
+    VISIBLE I IZ add5 YR num
+    VISIBLE IT + " IT before"
+    I IZ add5 YR num
+    VISIBLE num + " num"
+    VISIBLE IT + " IT"
+    num R I IZ add5 YR num
+    VISIBLE num + " num after"
+
+    BTW typecasting stuff
+    VISIBLE ""
+    VISIBLE "Typecasting Tests"
+    MAEK num A NUMBR
+    VISIBLE num + " using MAEK A"
+    num IS NOW A NUMBR
+    VISIBLE num + " using IS NOW A"
 
 KTHXBYE

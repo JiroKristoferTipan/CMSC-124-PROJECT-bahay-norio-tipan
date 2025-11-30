@@ -66,7 +66,7 @@ def parse_statement(tokens, current):
             return parse_varDeclaration(tokens, current)
 
         # Variable Initialization Section: WAZZUP ... BUHBYE
-        case "Start something":
+        case "Start Declarations":
             return parse_varInitSection(tokens, current)
 
         # Output: VISIBLE
@@ -250,7 +250,7 @@ def parse_varInitSection(tokens, current):
 
     # Parse statements inside section (only variable declarations allowed)
     statements = []
-    while current < len(tokens) and tokens[current][1] != "End something":
+    while current < len(tokens) and tokens[current][1] != "End Declarations":
         # Check if we hit the end of program without BUHBYE
         if tokens[current][1] == "Code End":
             line = get_line_number(tokens, current)
@@ -266,7 +266,7 @@ def parse_varInitSection(tokens, current):
             statements.append(stmt)
 
     # Expect BUHBYE
-    if current >= len(tokens) or tokens[current][1] != "End something":
+    if current >= len(tokens) or tokens[current][1] != "End Declarations":
         line = get_line_number(tokens, current)
         raise SyntaxError(f"Expected 'BUHBYE' to close varinitsection at line {line}")
 
@@ -652,7 +652,7 @@ def parse_codeblock(tokens, current):
     while current < len(tokens) and tokens[current][1] not in [
         "If Else End", "Else If Keyword", "Else Keyword",
         "Switch Case Keyword", "Switch Default Keyword", 
-        "End something", "Code End", "Function End", "Loop End Keyword"
+        "End Declarations", "Code End", "Function End", "Loop End Keyword"
     ]:
         stmt, current = parse_statement(tokens, current)
         if stmt:

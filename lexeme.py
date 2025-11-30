@@ -40,8 +40,8 @@ token_patterns = [
     # SINGLE-WORD KEYWORDS
     (r'HAI\b', 'Code Start'),
     (r'KTHXBYE\b', 'Code End'),
-    (r'WAZZUP\b', 'Start something'),
-    (r'BUHBYE\b', 'End something'),
+    (r'WAZZUP\b', 'Start Declarations'),
+    (r'BUHBYE\b', 'End Declarations'),
     (r'BTW\b', 'Single Comment Line'),
     (r'OBTW\b', 'Multi Comment Start'),
     (r'TLDR\b', 'Multi Comment End'),

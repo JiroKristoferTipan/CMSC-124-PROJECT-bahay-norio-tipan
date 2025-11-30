@@ -26,9 +26,9 @@ def executeProgram(ast):
             case "Assignment":
                 execute_assignment(elements)
             case "Typecast":
-                execute_typecast(elements)
+                symbolTable[elements["variable"]] = execute_typecast(elements)
             case "TypecastExpression":
-                execute_typecast(elements)
+                symbolTable["IT"] = execute_typecast(elements)
             case "ExpressionStatement":
                 execute_expressionStatement(elements["expression"])
             case "IfStatement":
@@ -39,11 +39,16 @@ def executeProgram(ast):
                 execute_loop(elements)
             case "FunctionDefinition":
                 execute_functionDefinition(elements)
+            case "FunctionCall":
+                symbolTable["IT"] = execute_functionCall(elements)
             case "Break":
-                return False
+                pass
+            case _:
+                raise TypeError(f"Unknown statement type '{elements['type']}'")
 
-    # see symbols saved
+    # see symbols/functions saved
     #print("Final Symbol Table:", symbolTable)
+    # print("Final Function Table:", functionTable)
 
     return True
 
@@ -65,21 +70,22 @@ def execute_statement(node):
         case "Assignment":
             execute_assignment(node)
         case "Typecast":
-            execute_typecast(node)
+            symbolTable[node["variable"]] = execute_typecast(node)
+            return symbolTable[node["variable"]]
         case "TypecastExpression":
-            execute_typecast(node)
+            return execute_typecast(node)
         case "ExpressionStatement":
             execute_expressionStatement(node["expression"])
         case "IfStatement":
-            return execute_ifStatement(node)                # kinda looks ungly ngl
+            return execute_ifStatement(node)                # kinda looks ugly ngl
         case "Loop":
             execute_loop(node)
         case "FunctionDefinition":
             execute_functionDefinition(node)
         case "FunctionCall":
-            execute_functionCall(node)
+            return execute_functionCall(node)
         case "Return":
-            raise ReturnException(resolve_value(node["value"]) if node["value"] else None)
+            return resolve_value(node["value"])
         case "Break":
             return False
 
@@ -135,6 +141,8 @@ def execute_output(ast):
             message += str(execute_unary(elements["operator"], elements["operand"]))
         elif elements["type"] == "MultiOperation":
             message += str(execute_multiOperation(elements["operator"], elements["operands"]))
+        elif elements["type"] == "FunctionCall":
+            message += str(execute_functionCall(elements))
             
     print(message)
 
@@ -213,69 +221,71 @@ def execute_binaryOperation(operation, left, right):
     right_val = resolve_value(right)
     # print(left_val,right_val, type(left_val),type(right_val))
     # print(symbolTable)
+    datatype = find_highest_datatype(left_val, right_val)
+    numtype = get_num_datatype(left_val, right_val)
     # perform operation
     match operation:
         case "SUM":
-            left_val = convertTroof(left_val)
-            right_val = convertTroof(right_val)
+            left_val = typecast(left_val, numtype)
+            right_val = typecast(right_val, numtype)
             return left_val + right_val
         case "DIFF":
-            left_val = convertTroof(left_val)
-            right_val = convertTroof(right_val)
+            left_val = typecast(left_val, numtype)
+            right_val = typecast(right_val, numtype)
             return left_val - right_val
         case "PRODUKT":
-            left_val = convertTroof(left_val)
-            right_val = convertTroof(right_val)
+            left_val = typecast(left_val, numtype)
+            right_val = typecast(right_val, numtype)
             return left_val * right_val
         case "QUOSHUNT":
-            left_val = convertTroof(left_val)
-            right_val = convertTroof(right_val)
+            left_val = typecast(left_val, numtype)
+            right_val = typecast(right_val, numtype)
             # fix python division always converting to float
             if left_val % right_val == 0:
                 return int(left_val / right_val)
             # if dividing actually is a float return this
             return left_val / right_val
         case "MOD":
-            left_val = convertTroof(left_val)
-            right_val = convertTroof(right_val)
+            left_val = typecast(left_val, numtype)
+            right_val = typecast(right_val, numtype)
             return left_val % right_val
         case "BIGGR":
-            left_val = convertTroof(left_val)
-            right_val = convertTroof(right_val)
+            left_val = typecast(left_val, numtype)
+            right_val = typecast(right_val, numtype)
             return max(left_val, right_val)  # Return the bigger value
         case "SMALLR":
-            left_val = convertTroof(left_val)
-            right_val = convertTroof(right_val)
+            left_val = typecast(left_val, numtype)
+            right_val = typecast(right_val, numtype)
             return min(left_val, right_val)  # Return the smaller value
         case "CONCATENATE":
             return str(left_val)+str(right_val)
         case "BOTH":
-            left_val = convertTroof(left_val)
-            right_val = convertTroof(right_val)
+            left_val = typecast(left_val, datatype)
+            right_val = typecast(right_val, datatype)
             if left_val == right_val == 1:
                 return "WIN"
             return "FAIL"
         case "EITHER":
-            left_val = convertTroof(left_val)
-            right_val = convertTroof(right_val)
+            left_val = typecast(left_val, datatype)
+            right_val = typecast(right_val, datatype)
             if left_val or right_val:
                 return "WIN"
             return "FAIL"
         case "WON":
-            left_val = convertTroof(left_val)
-            right_val = convertTroof(right_val)
+            left_val = typecast(left_val, datatype)
+            right_val = typecast(right_val, datatype)
             if left_val != right_val:
                 return "WIN"
             return "FAIL"
         case "BOTH SAEM":
-            left_val = convertTroof(left_val)
-            right_val = convertTroof(right_val)
+            left_val = typecast(left_val, datatype)
+            right_val = typecast(right_val, datatype)
             if left_val == right_val:
                 return "WIN"
             return "FAIL"
         case "DIFFRINT":
-            left_val = convertTroof(left_val)
-            right_val = convertTroof(right_val)
+            left_val = typecast(left_val, datatype)
+            right_val = typecast(right_val, datatype)
             if left_val != right_val:
                 return "WIN"
             return "FAIL"
@@ -315,6 +325,8 @@ def execute_assignment(elements):
         symbolTable[var_name] = execute_typecast(val)
     elif val["type"] == "BinaryOperation":
         symbolTable[var_name] = execute_binaryOperation(val["operator"], val["left"], val["right"])
+    elif val["type"] == "FunctionCall":
+        symbolTable[var_name] = execute_functionCall(val)
     else:
         raise TypeError(f"Cannot assign value of type '{val['type']}' to variable '{var_name}'")
     
@@ -337,14 +349,14 @@ def execute_typecast(elements):
             # string -> float?
             if isinstance(value, str):
                 if re.fullmatch(r"[+-]?\d+\.\d+", value):
-                    symbolTable[var_name] = float(value)
+                    value = float(value)
                 elif re.fullmatch(r"[+-]?\d+", value):
-                    symbolTable[var_name] = float(int(value))
+                    value = float(int(value))
                 else:
                     raise ValueError(f"Cannot convert '{value}' to NUMBAR")
             # already number
             elif isinstance(value, (int, float)):
-                symbolTable[var_name] = float(value)
+                value = float(value)
             else:
                 raise ValueError(f"Cannot convert type {type(value)} to NUMBAR")
 
@@ -353,11 +365,11 @@ def execute_typecast(elements):
         case "NUMBR":
             if isinstance(value, str):
                 if re.fullmatch(r"[+-]?\d+", value):
-                    symbolTable[var_name] = int(value)
+                    value = int(value)
                 else:
                     raise ValueError(f"Cannot convert '{value}' to NUMBR")
             elif isinstance(value, float):
-                symbolTable[var_name] = int(value)
+                value = int(value)
             elif isinstance(value, int):
                 pass  # already NUMBR
             else:
@@ -367,21 +379,21 @@ def execute_typecast(elements):
         # TROOF
         case "TROOF":
             if value == 0 or value == "" or value is None:
-                symbolTable[var_name] = "FAIL"
+                value = "FAIL"
             else:
-                symbolTable[var_name] = "WIN"
+                value = "WIN"
 
 
         # YARN
         case "YARN":
-            symbolTable[var_name] = str(value)
+            value = str(value)
 
 
         # Invalid target type
         case _:
             raise ValueError(f"Invalid typecast target: {elements['targetType']}")
 
-    return symbolTable[var_name]
+    return value
 
 def execute_unary(operator, operand):
     var_name = operand["name"]
@@ -445,7 +457,7 @@ def execute_multiOperation(operator, operands):
 
 def execute_expressionStatement(node):
     if node["type"] == "FunctionCall":
-        execute_functionCall(node)
+        symbolTable["IT"] = execute_functionCall(node)
     else:
         symbolTable["IT"] = resolve_value(node)
 
@@ -596,7 +608,7 @@ def execute_functionCall(node):
     if len(params) != len(args):
         raise TypeError(f"Function '{fname}' expects {len(params)} args but got {len(args)}")
 
-    # Create local stack
+    # Create local symbol table copy
     oldSymbolTable = dict(symbolTable)
 
     # Bind parameters
@@ -604,16 +616,16 @@ def execute_functionCall(node):
         symbolTable[p] = resolve_value(a)
 
     # Execute body
-    try:
-        for stmt in body:
-            execute_statement(stmt)
+    for stmt in body:
+        returnval = execute_statement(stmt)
+        if stmt["type"] == "Return":
+            break
 
-        # No explicit return then IT = NOOB
-        symbolTable["IT"] = "NOOB"
-
-    except ReturnException as ret:
-        # Set IT to the return value, or NOOB if no value
-        symbolTable["IT"] = ret.value if ret.value is not None else "NOOB"
+    # # If returnval is None, set IT to NOOB, otherwise set to result
+    # if returnval is None:
+    #     symbolTable["IT"] = "NOOB"
+    # else:
+    #     symbolTable["IT"] = returnval
 
     # Restore global variables except IT
     for k in list(symbolTable.keys()):
@@ -623,3 +635,143 @@ def execute_functionCall(node):
     for k, v in oldSymbolTable.items():
         if k != "IT":
             symbolTable[k] = v
+
+    #return val to check if need to assign to var or IT
+    return returnval
+
+def find_highest_datatype(operand1, operand2):
+    operand1 = type(operand1).__name__
+    operand2 = type(operand2).__name__
+    if operand1 == "str" or operand2 == "str":
+        return "str"
+    elif operand1 == "float" or operand2 == "float":
+        return "float"
+    elif operand1 == "int" or operand2 == "int":
+        return "int"
+    elif operand1 == "bool" or operand2 == "bool":
+        return "bool"
+    return None
+
+def get_num_datatype(op1, op2):
+    operand1 = type(op1).__name__
+    operand2 = type(op2).__name__
+    #if there isnt at least 1 float, u can always get int from arithmetic operations, typecast func will handle null typecasting errors
+    if operand1 == "float" or operand2 == "float":
+        return "float"
+    return "int"
+        
+# for implicit typecasting
+def typecast(operand, datatype):
+    if datatype == "bool":
+        operandtype = type(operand).__name__
+        match operandtype:
+            case None:
+                return False
+            
+            case "bool":
+                return operand
+            
+            case "int":
+                if operand == 0:
+                    return False
+                return True
+            
+            case "float":
+                if operand == 0:
+                    return False
+                return True
+            
+            case "str":
+                if operand in ["", "0"]:
+                    return False
+                return True
+
+            case _:
+                raise ValueError(f"Unexpected data type {operand} when typecasting to bool.")
+    elif datatype == "int":
+        operandtype = type(operand).__name__
+        if operandtype == "str":
+            operand = re.sub('"', "", operand )
+        if operand == "FAIL" or operand == "WIN":
+            operandtype = "bool"
+            #print("\n")
+        #print(operand)
+        match operandtype:
+            case None:
+                raise ValueError(f"{operand} cannot be typecasted to int.")
+            
+            case "bool":
+                if operand == False:
+                    return 0
+                return 1
+            
+            case "int":
+                return operand
+            
+            case "float":
+                return int(operand)
+            
+            case "str":
+                try:
+                    string = int(operand)
+                    return string
+                except ValueError:
+                    raise SyntaxError(f"Cannot typecast int to string {operand}.")
+
+            case _:
+                raise ValueError(f"Unexpected data type {operand} when typecasting to int.")
+    elif datatype == "float":
+        operandtype = type(operand).__name__
+        if operandtype == "str":
+            operand = re.sub('"', "", operand )
+        if operand == "FAIL" or operand == "WIN":
+            operandtype = "bool"
+        match operandtype:
+            case None:
+                raise ValueError(f"{operand} cannot be typecasted to float.")
+            
+            case "bool":
+                if operand == False:
+                    return 0
+                return 1.0
+            
+            case "int":
+                return float(operand)
+            
+            case "float":
+                return operand
+            
+            case "str":
+                try:
+                    string = float(operand)
+                    return string
+                except ValueError:
+                    raise SyntaxError(f"Cannot typecast float to string {operand}.")
+
+            case _:
+                raise ValueError(f"Unexpected data type {operand} when typecasting to float.")
+    elif datatype == "str":
+        operandtype = type(operand).__name__
+        match operandtype:
+            case None:
+                raise ValueError(f"{operand} cannot be typecasted to string.")
+            
+            case "bool":
+                if operand:
+                    return "WIN"
+                return "FAIL"
+            
+            case "int":
+                return str(operand)
+            
+            case "float":
+                return str(operand)
+            
+            case "str":
+                return operand
+
+            case _:
+                raise SyntaxError(f"Unexpected data type {operand} when typecasting to string.")
+    else:
+        raise ValueError(f"Unknown datatype {datatype} for typecasting.")
+        
