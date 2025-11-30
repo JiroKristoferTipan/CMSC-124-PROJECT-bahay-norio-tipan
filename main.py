@@ -31,7 +31,7 @@ def main():
     #         # f.write("\n")
     #     fileCounter += 1
     
-    with open("project-testcases/test.lol", "r") as file:
+    with open("project-testcases/test1.lol", "r") as file:
             content = file.read()
             #tokenizer_instance = lexeme.tokenizer(content)
             tokens = lexeme.tokenize(content)
@@ -39,7 +39,7 @@ def main():
             ast = parse_program(tokens)
             with open("output.txt", "w") as f:
                 f.write(json.dumps(ast, indent=2))
-            print(json.dumps(ast, indent=2))
+            # print(json.dumps(ast, indent=2))
             
             executeProgram(ast)
             # parser.parse_program(tokens)

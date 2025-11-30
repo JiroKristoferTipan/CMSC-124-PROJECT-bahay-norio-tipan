@@ -300,13 +300,34 @@ def parse_output(tokens, current):
 
 
 def parse_expression(tokens, current):
+    # Parse primary expression first
+    node, current = parse_primary_expression(tokens, current)
+    
+    # Then handle concatenation at the lowest precedence
+    while current < len(tokens) and tokens[current][1] == "Concatenation Operator":
+        current += 1  # skip +
+        if current >= len(tokens):
+            line = get_line_number(tokens, current - 1)
+            raise SyntaxError(f"Expected expression after '+' at line {line}")
+        right, current = parse_primary_expression(tokens, current)
+        node = {
+            "type": "BinaryOperation",
+            "operator": "CONCATENATE",
+            "left": node,
+            "right": right
+        }
+    
+    return node, current
+
+
+def parse_primary_expression(tokens, current):
     if current >= len(tokens):
         line = get_line_number(tokens, current - 1)
         raise SyntaxError(f"Unexpected end of tokens in expression (line {line})")
 
     token_type = tokens[current][1]
     
-    if tokens[current-1][1] == tokens[current][1]:
+    if current > 0 and tokens[current-1][1] == tokens[current][1]:
         line = get_line_number(tokens, current)
         raise SyntaxError(f"Expected a delimeter after a {tokens[current-1][1].lower()} at line {line}")
 
@@ -314,50 +335,16 @@ def parse_expression(tokens, current):
     if token_type in ["YARN", "NUMBR", "NUMBAR", "TROOF", "NOOB"]:
         value = tokens[current][0]
         current += 1
-        
-        node = {
+        return {
             "type": "Literal",
             "valueType": token_type,
             "value": value
-        }
-        
-        # Handle concatenation operator (+)
-        while current < len(tokens) and tokens[current][1] == "Concatenation Operator":
-            current += 1  # skip +
-            if current >= len(tokens):
-                line = get_line_number(tokens, current - 1)
-                raise SyntaxError(f"Expected expression after '+' at line {line}")
-            right, current = parse_expression(tokens, current)
-            node = {
-                "type": "BinaryOperation",
-                "operator": "CONCATENATE",
-                "left": node,
-                "right": right
-            }
-        
-        return node, current
+        }, current
 
     elif token_type == "Variable":
         var_name = tokens[current][0]
         current += 1
-        
-        node = {"type": "Variable", "name": var_name}
-        
-        # Handle concatenation operator (+)
-        while current < len(tokens) and tokens[current][1] == "Concatenation Operator":
-            current += 1  # skip +
-            if current >= len(tokens):
-                line = get_line_number(tokens, current - 1)
-                raise SyntaxError(f"Expected expression after '+' at line {line}")
-            right, current = parse_expression(tokens, current)
-            node = {
-                "type": "BinaryOperation",
-                "operator": "CONCATENATE",
-                "left": node,
-                "right": right
-            }
-        
-        return node, current
+        return {"type": "Variable", "name": var_name}, current
 
     # Binary operations
     elif token_type in [
@@ -383,14 +370,14 @@ def parse_expression(tokens, current):
         operator = op_map[token_type]
         current += 1
         
-        left, current = parse_expression(tokens, current)
+        left, current = parse_primary_expression(tokens, current)
 
         if current >= len(tokens) or tokens[current][1] != "Parameter Delimiter":
             line = get_line_number(tokens, current)
             raise SyntaxError(f"Expected 'AN' in binary operation at line {line}")
         current += 1
 
-        right, current = parse_expression(tokens, current)
+        right, current = parse_primary_expression(tokens, current)
 
         return {
             "type": "BinaryOperation",
@@ -402,7 +389,7 @@ def parse_expression(tokens, current):
     # Unary operation (NOT)
     elif token_type == "Not Operation":
         current += 1
-        operand, current = parse_expression(tokens, current)
+        operand, current = parse_primary_expression(tokens, current)
         return {
             "type": "UnaryOperation",
             "operator": "NOT",
@@ -415,7 +402,7 @@ def parse_expression(tokens, current):
         current += 1
         
         operands = []
-        expr, current = parse_expression(tokens, current)
+        expr, current = parse_primary_expression(tokens, current)
         operands.append(expr)
         
         if current >= len(tokens) or tokens[current][1] != "Parameter Delimiter":
@@ -423,12 +410,12 @@ def parse_expression(tokens, current):
             raise SyntaxError(f"Expected 'AN' after first operand in multi-operation at line {line}")
         current += 1
         
-        expr, current = parse_expression(tokens, current)
+        expr, current = parse_primary_expression(tokens, current)
         operands.append(expr)
 
         while current < len(tokens) and tokens[current][1] == "Parameter Delimiter":
             current += 1
-            expr, current = parse_expression(tokens, current)
+            expr, current = parse_primary_expression(tokens, current)
             operands.append(expr)
 
         if current < len(tokens) and tokens[current][1] == "Concatenation Delimiter":
@@ -464,14 +451,13 @@ def parse_concatenate(tokens, current):
     current += 1
 
     expressions = []
-    expr, current = parse_expression(tokens, current)
+    expr, current = parse_primary_expression(tokens, current)
     expressions.append(expr)
 
     while current < len(tokens) and tokens[current][1] == "Parameter Delimiter":
         current += 1
-        expr, current = parse_expression(tokens, current)
+        expr, current = parse_primary_expression(tokens, current)
         expressions.append(expr)
-
 
     return {
         "type": "Concatenation",
