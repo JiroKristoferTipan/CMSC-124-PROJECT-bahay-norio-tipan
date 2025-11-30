@@ -3,7 +3,7 @@ from semantic import executeProgram
 import lexeme
 import os
 import json
-# import gui
+import gui
 
 # Main
 def main():
@@ -56,4 +56,3 @@ def main():
             
 if __name__ == "__main__":
     main()
-    # gui
