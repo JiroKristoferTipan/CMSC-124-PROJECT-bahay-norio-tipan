@@ -31,7 +31,7 @@ def main():
     #         # f.write("\n")
     #     fileCounter += 1
     
-    with open("project-testcases/test1.lol", "r") as file:
+    with open("project-testcases/08_switch.lol", "r") as file:
             content = file.read()
             #tokenizer_instance = lexeme.tokenizer(content)
             tokens = lexeme.tokenize(content)

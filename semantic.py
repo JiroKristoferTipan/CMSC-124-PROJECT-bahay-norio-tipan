@@ -528,19 +528,28 @@ def execute_switchStatement(cases):
     listCase = cases["cases"]
     found = False
 
-    # search for case
+    # search for matching case
     for case in listCase:
         if convertTroof(case["value"]["value"]) == convertTroof(symbolTable["IT"]):
             # found value, run everything under it
             found = True
+        
         if found:
-            if not executeProgram(case):
+            # Execute case body
+            for statement in case["body"]:
+                result = execute_statement(statement)
+                # Check for Break statement
+                if statement["type"] == "Break":
+                    return  # Exit the entire switch
+                if result == False:  # Other break condition
+                    return
+    
+    # Only execute default if no case was found
+    if not found and cases["default"] is not None:
+        for statement in cases["default"]:
+            result = execute_statement(statement)
+            if result == False:
                 return
-
-    # default case
-    for statement in cases["default"]:
-        if not execute_statement(statement):
-            return
         
 def execute_loop(node):
     label = node["label"]
