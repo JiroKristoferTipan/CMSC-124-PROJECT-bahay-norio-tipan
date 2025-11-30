@@ -8,12 +8,12 @@ from collections import deque
 import builtins
 import sys
 
-# --- GLOBALS ---
+# GLOBALS 
 user_input_queue = deque()
 input_active = False
 input_buffer = ""
 
-# --- CONSOLE REDIRECT ---
+# CONSOLE REDIRECT 
 class ConsoleRedirect:
     def __init__(self, console_widget):
         self.console = console_widget
@@ -21,40 +21,30 @@ class ConsoleRedirect:
     def write(self, text):
         self.console.config(state="normal")
         self.console.insert("end", text)
-        self.console.see("end")  # auto-scroll
+        self.console.see("end")
         self.console.config(state="disabled")
 
     def flush(self):
         pass
 
-# --- GUI SYMBOL TABLE UPDATE ---
+# GUI SYMBOL TABLE UPDATE
 def update_symbol_table():
-    """Refresh the GUI symbol table from semantic.symbolTable"""
     symbols_table.delete(*symbols_table.get_children())
     for ident, val in symbolTable.items():
         symbols_table.insert("", "end", values=(ident, val))
-    # Force GUI to update immediately
     root.update_idletasks()
 
-# --- CONSOLE INPUT HANDLING ---
+# CONSOLE INPUT HANDLING
 def gui_input(prompt=""):
-    """Replaces built-in input() during execution"""
     global input_active, input_buffer
     print(prompt, end="")
-    
-    # Update symbol table BEFORE waiting for input
     update_symbol_table()
-    
     input_active = True
     input_buffer = ""
-
     while not user_input_queue:
-        root.update()  # wait for user input
-
+        root.update()
     input_active = False
     val = user_input_queue.popleft()
-
-    # Update symbol table again after input
     update_symbol_table()
     return val
 
@@ -62,7 +52,6 @@ def on_console_key(event):
     global input_active, input_buffer
     if not input_active:
         return "break"
-
     if event.keysym == "Return":
         user_input_queue.append(input_buffer)
         input_buffer = ""
@@ -70,7 +59,6 @@ def on_console_key(event):
         console.insert("end", "\n")
         console.config(state="disabled")
         return "break"
-
     elif event.keysym == "BackSpace":
         if input_buffer:
             input_buffer = input_buffer[:-1]
@@ -78,7 +66,6 @@ def on_console_key(event):
             console.delete("end-2c")
             console.config(state="disabled")
         return "break"
-
     else:
         input_buffer += event.char
         console.config(state="normal")
@@ -86,7 +73,7 @@ def on_console_key(event):
         console.config(state="disabled")
         return "break"
 
-# --- FILE AND EXECUTION ---
+# FILE AND EXECUTION 
 def open_file():
     filepath = filedialog.askopenfilename(
         title="Open LOLCode File",
@@ -106,7 +93,6 @@ def open_file():
     console.config(state="disabled")
 
 def submit_user_input():
-    """Submit input from GUI input box"""
     value = input_entry.get()
     if value.strip():
         user_input_queue.append(value)
@@ -114,17 +100,14 @@ def submit_user_input():
 
 def execute_code():
     code = editor.get("1.0", "end-1c")
-
     console.config(state="normal")
     console.delete("1.0", "end")
     console.config(state="disabled")
-
     original_stdout = sys.stdout
     sys.stdout = ConsoleRedirect(console)
     original_input = builtins.input
     builtins.input = gui_input
 
-    # Tokenize
     try:
         tokens = tokenize(code)
     except Exception as e:
@@ -133,13 +116,11 @@ def execute_code():
         builtins.input = original_input
         return
 
-    # Update lexeme table (exclude newlines)
     lexemes_table.delete(*lexemes_table.get_children())
     for token, token_type in tokens:
         if token_type != "Newline":
             lexemes_table.insert("", "end", values=(token, token_type))
 
-    # Parse
     try:
         ast = parse_program(tokens)
     except Exception as e:
@@ -148,15 +129,12 @@ def execute_code():
         builtins.input = original_input
         return
 
-    # Semantics
     try:
         symbolTable.clear()
         executeProgram(ast)
-        # Update symbol table immediately after execution completes
         update_symbol_table()
     except Exception as e:
         print(f"SEMANTICS ERROR: {str(e)}")
-        # Update symbol table even on error to show any variables that were created
         update_symbol_table()
     finally:
         sys.stdout = original_stdout
@@ -166,82 +144,223 @@ def execute_code():
 root = tk.Tk()
 root.title("LOLCODE INTERPRETER")
 root.state("zoomed")
-root.geometry("1200x600")
-root.configure(bg="#f0f0f0")
+root.geometry("1200x750")
+root.configure(bg="#1a1a1a")
 
-# File Header
-file_frame = tk.Frame(root, bg="#dcdcdc", height=50)
-file_frame.place(x=20, y=20, width=550)
-file_label = tk.Label(file_frame, text="No file opened", font=("Consolas", 14, "bold"), bg="#dcdcdc")
-file_label.pack(side="left", padx=10, pady=10)
+style = ttk.Style()
+style.theme_use("clam")
 
-folder_button = tk.Button(root, text="📂", font=("Consolas", 20), bg="#dcdcdc", command=open_file)
-folder_button.place(x=600, y=20, width=50, height=50)
+style.configure("Dark.Treeview",
+    background="#2b2b2b",
+    foreground="#e0e0e0",
+    fieldbackground="#2b2b2b",
+    borderwidth=0,
+    rowheight=25
+)
+style.configure("Dark.Treeview.Heading",
+    background="#1e1e1e",
+    foreground="#ffffff",
+    borderwidth=0,
+    relief="flat",
+    font=("Consolas", 10, "bold")
+)
+style.map("Dark.Treeview",
+    background=[("selected", "#0d7377")],
+    foreground=[("selected", "#ffffff")]
+)
+style.map("Dark.Treeview.Heading",
+    background=[("active", "#2d2d2d")]
+)
 
-# Main container
-container = tk.Frame(root, bg="#f0f0f0")
-container.pack(fill="both", expand=True, padx=20, pady=(80, 20))
+top_bar = tk.Frame(root, bg="#252525", height=60)
+top_bar.pack(fill="x", side="top")
+top_bar.pack_propagate(False)
 
-editor = scrolledtext.ScrolledText(container, width=70, font=("Consolas", 12), bg="white")
-editor.pack(side="left", fill="both", expand=True, padx=(0,10))
+file_section = tk.Frame(top_bar, bg="#2d2d2d", highlightbackground="#404040", highlightthickness=1)
+file_section.pack(side="left", padx=15, pady=10, fill="y")
 
-sidebar = tk.Frame(container, bg="#f0f0f0")
-sidebar.pack(side="right", fill="both")
+folder_button = tk.Button(
+    file_section, text="📁", font=("Segoe UI Emoji", 10),
+    bg="#3d3d3d", fg="#ffffff", bd=0, relief="flat",
+    activebackground="#4d4d4d", cursor="hand2",
+    command=open_file, padx=12, pady=8
+)
+folder_button.pack(side="left", padx=8, pady=5)
 
-# Lexeme table
-lexemes_frame = tk.Frame(sidebar, bg="#e6e6e6")
-lexemes_frame.pack(fill="both", expand=True, padx=(0,10))
-lexemes_label = tk.Label(lexemes_frame, text="Lexemes", font=("Consolas", 14))
-lexemes_label.pack(pady=5)
-lexemes_table = ttk.Treeview(lexemes_frame, columns=("lexeme","classification"), show="headings")
+file_label = tk.Label(
+    file_section, text="No file opened",
+    font=("Segoe UI", 11), bg="#2d2d2d", fg="#b0b0b0"
+)
+file_label.pack(side="left", padx=(5, 12), pady=5)
+
+execute_button = tk.Button(
+    top_bar, text="▶ EXECUTE",
+    font=("Segoe UI", 11, "bold"),
+    bg="#2ecc71", fg="#ffffff",
+    activebackground="#27ae60", activeforeground="#ffffff",
+    bd=0, relief="flat", cursor="hand2",
+    command=execute_code, padx=25, pady=12
+)
+execute_button.pack(side="right", padx=15, pady=10)
+
+def on_enter_execute(e):
+    execute_button.config(bg="#27ae60")
+def on_leave_execute(e):
+    execute_button.config(bg="#2ecc71")
+execute_button.bind("<Enter>", on_enter_execute)
+execute_button.bind("<Leave>", on_leave_execute)
+
+def on_enter_folder(e):
+    folder_button.config(bg="#4d4d4d")
+def on_leave_folder(e):
+    folder_button.config(bg="#3d3d3d")
+folder_button.bind("<Enter>", on_enter_folder)
+folder_button.bind("<Leave>", on_leave_folder)
+
+container = tk.Frame(root, bg="#1a1a1a")
+container.pack(fill="both", expand=True, padx=15, pady=(10, 5))
+
+editor_container = tk.Frame(container, bg="#2d2d2d", highlightbackground="#404040", highlightthickness=1)
+editor_container.pack(side="left", fill="both", expand=True, padx=(0, 8))
+
+editor_header = tk.Label(
+    editor_container, text="CODE EDITOR",
+    font=("Segoe UI", 10, "bold"),
+    bg="#1e1e1e", fg="#ffffff",
+    anchor="w", padx=10, pady=8
+)
+editor_header.pack(fill="x")
+
+editor = scrolledtext.ScrolledText(
+    editor_container, font=("Consolas", 11), bg="#1e1e1e", fg="#d4d4d4",
+    insertbackground="#ffffff", selectbackground="#264f78",
+    bd=0, relief="flat", padx=10, pady=5
+)
+editor.pack(fill="both", expand=True, padx=3, pady=(0, 3))
+
+tables_container = tk.Frame(container, bg="#1a1a1a")
+tables_container.pack(side="right", fill="both", expand=True)
+
+lexemes_container = tk.Frame(tables_container, bg="#2d2d2d", highlightbackground="#404040", highlightthickness=1)
+lexemes_container.pack(fill="both", expand=True, pady=(0, 8))
+
+lexemes_header = tk.Label(
+    lexemes_container, text="LEXEMES",
+    font=("Segoe UI", 10, "bold"),
+    bg="#1e1e1e", fg="#ffffff",
+    anchor="w", padx=10, pady=8
+)
+lexemes_header.pack(fill="x")
+
+lexemes_table = ttk.Treeview(
+    lexemes_container, columns=("lexeme", "classification"),
+    show="headings", style="Dark.Treeview", height=8
+)
 lexemes_table.heading("lexeme", text="Lexeme")
 lexemes_table.heading("classification", text="Classification")
-lexemes_table.pack(fill="both", expand=True, padx=10, pady=10)
+lexemes_table.column("lexeme", width=140, anchor="w")
+lexemes_table.column("classification", width=140, anchor="w")
+lexemes_table.pack(fill="both", expand=True, padx=3, pady=(0, 3))
 
-# Symbol table
-symbols_frame = tk.Frame(sidebar, bg="#e6e6e6")
-symbols_frame.pack(fill="both", expand=True)
-symbols_label = tk.Label(symbols_frame, text="Symbol Table", font=("Consolas", 14))
-symbols_label.pack(pady=5)
-symbols_table = ttk.Treeview(symbols_frame, columns=("identifier","value"), show="headings")
+lexemes_table.tag_configure("oddrow", background="#2b2b2b")
+lexemes_table.tag_configure("evenrow", background="#323232")
+
+symbols_container = tk.Frame(tables_container, bg="#2d2d2d", highlightbackground="#404040", highlightthickness=1)
+symbols_container.pack(fill="both", expand=True)
+
+symbols_header = tk.Label(
+    symbols_container, text="SYMBOL TABLE",
+    font=("Segoe UI", 10, "bold"),
+    bg="#1e1e1e", fg="#ffffff",
+    anchor="w", padx=10, pady=8
+)
+symbols_header.pack(fill="x")
+
+symbols_table = ttk.Treeview(
+    symbols_container, columns=("identifier", "value"),
+    show="headings", style="Dark.Treeview", height=8
+)
 symbols_table.heading("identifier", text="Identifier")
 symbols_table.heading("value", text="Value")
-symbols_table.pack(fill="both", expand=True, padx=10, pady=10)
+symbols_table.column("identifier", width=140, anchor="w")
+symbols_table.column("value", width=140, anchor="w")
+symbols_table.pack(fill="both", expand=True, padx=3, pady=(0, 3))
 
-# Bottom terminal + input
-bottom_frame = tk.Frame(root, bg="#f0f0f0")
-bottom_frame.pack(fill="both", expand=False, padx=20, pady=10)
+symbols_table.tag_configure("oddrow", background="#2b2b2b")
+symbols_table.tag_configure("evenrow", background="#323232")
 
-# Terminal left
-terminal_frame = tk.Frame(bottom_frame)
-terminal_frame.pack(side="left", fill="both", expand=True)
-console_label = tk.Label(terminal_frame, text="Terminal Output:", font=("Consolas", 12, "bold"))
-console_label.pack(anchor="w")
-console = tk.Text(terminal_frame, bg="#1e1e1e", fg="white", height=10, insertbackground="white")
-console.pack(fill="both", expand=True, pady=(5,5))
+bottom_frame = tk.Frame(root, bg="#1a1a1a")
+bottom_frame.pack(fill="both", expand=True, padx=15, pady=(5, 15))
+
+terminal_container = tk.Frame(bottom_frame, bg="#2d2d2d", highlightbackground="#404040", highlightthickness=1)
+terminal_container.pack(side="left", fill="both", expand=True, padx=(0, 8))
+
+terminal_header = tk.Label(
+    terminal_container, text="TERMINAL",
+    font=("Segoe UI", 10, "bold"),
+    bg="#1e1e1e", fg="#ffffff",
+    anchor="w", padx=10, pady=8
+)
+terminal_header.pack(fill="x")
+
+console = tk.Text(
+    terminal_container, bg="#0a0a0a", fg="#00ff41",
+    font=("Consolas", 10), insertbackground="#00ff41",
+    selectbackground="#264f78", bd=0, relief="flat",
+    padx=10, pady=5
+)
+console.pack(fill="both", expand=True, padx=3, pady=(0, 3))
 console.config(state="disabled")
 console.bind("<Key>", on_console_key)
 
-# Input right
-input_frame = tk.Frame(bottom_frame, bg="#e0e0e0", width=250)
-input_frame.pack(side="right", fill="y", padx=10)
-input_label = tk.Label(input_frame, text="Input:", font=("Consolas", 12))
-input_label.pack(pady=(10,5))
-input_entry = tk.Entry(input_frame, font=("Consolas", 12))
-input_entry.pack(fill="x", padx=10)
-submit_btn = tk.Button(input_frame, text="Submit", font=("Consolas", 12), command=submit_user_input)
-submit_btn.pack(pady=10, padx=10, fill="x")
+input_container = tk.Frame(bottom_frame, bg="#2d2d2d", highlightbackground="#404040", highlightthickness=1, width=300)
+input_container.pack(side="right", fill="y")
+input_container.pack_propagate(False)
 
-# EXECUTE button
-execute_button = tk.Button(
-    root,
-    text="EXECUTE",
-    font=("Consolas", 14, "bold"),
-    bg="#4CAF50",
-    fg="white",
-    activebackground="#45a049",
-    command=execute_code
+input_header = tk.Label(
+    input_container, text="INPUT",
+    font=("Segoe UI", 10, "bold"),
+    bg="#1e1e1e", fg="#ffffff",
+    anchor="w", padx=10, pady=8
 )
-execute_button.place(relx=0.85, y=25, width=150, height=50)
+input_header.pack(fill="x")
+
+input_inner = tk.Frame(input_container, bg="#2d2d2d")
+input_inner.pack(fill="both", expand=True, padx=10, pady=10)
+
+input_entry = tk.Entry(
+    input_inner, font=("Consolas", 11),
+    bg="#1e1e1e", fg="#d4d4d4",
+    insertbackground="#ffffff", selectbackground="#264f78",
+    bd=1, relief="solid", highlightthickness=0
+)
+input_entry.pack(fill="x", ipady=8, pady=(0, 10))
+
+submit_btn = tk.Button(
+    input_inner, text="SUBMIT",
+    font=("Segoe UI", 10, "bold"),
+    bg="#3498db", fg="#ffffff",
+    activebackground="#2980b9", activeforeground="#ffffff",
+    bd=0, relief="flat", cursor="hand2",
+    command=submit_user_input, pady=10
+)
+submit_btn.pack(fill="x")
+
+def on_enter_submit(e):
+    submit_btn.config(bg="#2980b9")
+def on_leave_submit(e):
+    submit_btn.config(bg="#3498db")
+submit_btn.bind("<Enter>", on_enter_submit)
+submit_btn.bind("<Leave>", on_leave_submit)
+
+status_bar = tk.Frame(root, bg="#252525", height=25)
+status_bar.pack(fill="x", side="bottom")
+
+status_label = tk.Label(
+    status_bar, text="Ready",
+    font=("Segoe UI", 9), bg="#252525", fg="#b0b0b0",
+    anchor="w", padx=15
+)
+status_label.pack(side="left", fill="x")
 
 root.mainloop()
