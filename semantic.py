@@ -98,6 +98,15 @@ def execute_statement(node):
 def execute_variableInit(ast):
     for elements in ast:
         if elements["name"] not in symbolTable:
+            if elements["name"] in ["IT", "NUMBR", "NUMBAR", "YARN", "TROOF", "NOOB", "WIN", "FAIL", "+"
+                                    "HAI", "KTHXBYE", "I HAS A", "ITZ", "R", "IS NOW A", "MAEK", "A", "AN", 
+                                    "VISIBLE", "GIMMEH", "SUM OF", "DIFF OF", "PRODUKT OF", "QUOSHUNT OF", 
+                                    "MOD OF", "BIGGR OF", "SMALLR OF", "BOTH OF", "EITHER OF", "WON OF", 
+                                    "NOT", "ALL OF", "ANY OF", "MKAY", "BOTH SAEM", "DIFFRINT", "O RLY?", 
+                                    "YA RLY", "MEBBE", "NO WAI", "OIC", "WTF?", "OMG", "OMGWTF", "IM IN YR", 
+                                    "UPPIN", "NERFIN", "WILE", "TIL", "YR", "OUTTA YR", "HOW IZ I", "I IZ", 
+                                    "IF U SAY SO", "GTFO", "FOUND YR", "WAZZUP", "BUHBYE", "BTW", "OBTW", "TLDR"]:
+                raise SyntaxError(f"Cannot declare variable with reserved name {elements['name']}")
             if elements["value"] == None:
                 symbolTable[elements["name"]] = "NOOB"
             else:
