@@ -132,7 +132,6 @@ def execute_input(ast):
     symbolTable[ast] = input()
     
 def execute_output(ast):
-    # print(symbolTable)
     message = ""
     for elements in ast:
         if elements["type"] == "Literal":
@@ -228,8 +227,6 @@ def execute_binaryOperation(operation, left, right):
     # resolve both sides to numeric values
     left_val = resolve_value(left)
     right_val = resolve_value(right)
-    # print(left_val,right_val, type(left_val),type(right_val))
-    # print(symbolTable)
     datatype = find_highest_datatype(left_val, right_val)
     numtype = get_num_datatype(left_val, right_val)
     # perform operation
@@ -712,8 +709,6 @@ def typecast(operand, datatype):
             operand = re.sub('"', "", operand )
         if operand == "FAIL" or operand == "WIN":
             operandtype = "bool"
-            #print("\n")
-        #print(operand)
         match operandtype:
             case None:
                 raise ValueError(f"{operand} cannot be typecasted to int.")
