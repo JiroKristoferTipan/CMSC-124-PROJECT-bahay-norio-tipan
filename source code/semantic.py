@@ -463,7 +463,11 @@ def execute_multiOperation(operator, operands):
 
 def execute_expressionStatement(node):
     if node["type"] == "FunctionCall":
-        symbolTable["IT"] = execute_functionCall(node)
+        returnval = execute_functionCall(node)
+        if returnval:
+            symbolTable["IT"] = execute_functionCall(node)
+        else:
+            symbolTable["IT"] = "FAIL"
     else:
         symbolTable["IT"] = resolve_value(node)
 
